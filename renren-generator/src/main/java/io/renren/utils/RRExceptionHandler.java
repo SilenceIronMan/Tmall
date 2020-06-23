@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 异常处理器
- * 
+ *
  * @author chenshun
  * @email sunlightcs@gmail.com
  * @date 2016年10月27日 下午10:16:19
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class RRExceptionHandler implements HandlerExceptionResolver {
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	@Override
 	public ModelAndView resolveException(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex) {
@@ -29,7 +29,7 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
 		try {
 			response.setContentType("application/json;charset=utf-8");
 			response.setCharacterEncoding("utf-8");
-			
+
 			if (ex instanceof RRException) {
 				r.put("code", ((RRException) ex).getCode());
 				r.put("msg", ((RRException) ex).getMessage());
@@ -38,10 +38,10 @@ public class RRExceptionHandler implements HandlerExceptionResolver {
 			}else{
 				r = R.error();
 			}
-			
+
 			//记录异常日志
 			logger.error(ex.getMessage(), ex);
-			
+
 			String json = JSON.toJSONString(r);
 			response.getWriter().print(json);
 		} catch (Exception e) {

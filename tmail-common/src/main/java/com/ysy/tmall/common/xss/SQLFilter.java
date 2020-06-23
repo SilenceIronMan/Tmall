@@ -8,7 +8,8 @@
 
 package com.ysy.tmall.common.xss;
 
-import com.atguigu.common.utils.RRException;
+
+import com.ysy.tmall.common.utils.RRException;
 import org.apache.commons.lang.StringUtils;
 
 /**
