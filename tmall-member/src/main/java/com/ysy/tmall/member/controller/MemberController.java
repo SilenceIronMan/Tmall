@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.member.Feign.CouponFeignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import com.ysy.tmall.member.service.MemberService;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.R;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -30,6 +32,19 @@ import com.ysy.tmall.common.utils.R;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
+    @Resource
+    private CouponFeignService couponFeignService;
+
+
+
+    @RequestMapping("/getCoupons")
+    public R memberCoupons() {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setNickname("林俊杰");
+        R memberCoupons = couponFeignService.memberCoupons();
+        return R.ok().put("member", memberEntity).put("coupons", memberCoupons.get("coupons"));
+    }
 
     /**
      * 列表
