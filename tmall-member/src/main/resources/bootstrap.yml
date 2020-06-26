@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: tmall-member
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117:1111

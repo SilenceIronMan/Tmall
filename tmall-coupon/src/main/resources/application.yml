@@ -11,7 +11,9 @@ spring:
   application:
     name: tmall-coupon
 
-
+person:
+  name: tk
+  age: 19
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
