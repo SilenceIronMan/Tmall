@@ -18,7 +18,7 @@
         <module>tmall-ware</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
-        <module>tmail-common</module>
+        <module>tmall-common</module>
 
     </modules>
 
