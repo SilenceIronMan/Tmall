@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ysy.tmall</groupId>
+    <artifactId>tmall</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>tmall</name>
+    <description>T商城</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>tmall-coupon</module>
+        <module>tmall-member</module>
+        <module>tmall-order</module>
+        <module>tmall-product</module>
+        <module>tmall-ware</module>
+        <module>renren-fast</module>
+        <module>renren-generator</module>
+        <module>tmail-common</module>
+
+    </modules>
+
+</project>
