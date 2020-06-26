@@ -2,9 +2,14 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://129.211.93.117:12345/tmall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/tmall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 129.211.93.117:1111
+  application:
+    name: tmall-product
 
 
 mybatis-plus:
@@ -17,7 +22,7 @@ mybatis-plus:
 
 
 server:
-  port: 10000
+  port: 8002
 logging:
   level:
     com.ysy.tmall: debug
