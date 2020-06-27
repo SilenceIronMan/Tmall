@@ -1,20 +1,18 @@
 package com.ysy.tmall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.common.utils.R;
+import com.ysy.tmall.product.entity.CategoryEntity;
+import com.ysy.tmall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ysy.tmall.product.entity.CategoryEntity;
-import com.ysy.tmall.product.service.CategoryService;
-import com.ysy.tmall.common.utils.PageUtils;
-import com.ysy.tmall.common.utils.R;
+import java.util.Arrays;
+import java.util.List;
+
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 
 
@@ -32,14 +30,14 @@ public class CategoryController {
     private CategoryService categoryService;
 
     /**
-     * 列表
+     * 查询所有分类以及子类，以树形结构组装起来
      */
-    @RequestMapping("/list")
-    //@RequiresPermissions("product:category:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = categoryService.queryPage(params);
+    @RequestMapping("/list/tree")
+    public R list(){
 
-        return R.ok().put("page", page);
+        List<CategoryEntity> categoryList =  categoryService.listWithTree();
+
+        return R.ok().put("data", categoryList);
     }
 
 
