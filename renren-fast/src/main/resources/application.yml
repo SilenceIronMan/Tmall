@@ -39,7 +39,12 @@ spring:
     throw-exception-if-no-handler-found: true
 #  resources:
 #    add-mappings: false
-
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 129.211.93.117:1111
+  application:
+    name: renren-fast
 
 #mybatis
 mybatis-plus:
