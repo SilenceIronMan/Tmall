@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: tmall-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117:1111
+
+
+

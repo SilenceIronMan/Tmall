@@ -19,7 +19,7 @@
         <module>renren-fast</module>
         <module>renren-generator</module>
         <module>tmall-common</module>
-
+        <module>tmall-gateway</module>
     </modules>
 
 </project>
