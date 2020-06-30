@@ -49,7 +49,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -59,6 +59,18 @@ public class CategoryController {
     //@RequiresPermissions("product:category:save")
     public R save(@RequestBody CategoryEntity category){
 		categoryService.save(category);
+
+        return R.ok();
+    }
+
+
+    /**
+     * 批量保存
+     */
+    @RequestMapping("/update/sort")
+    //@RequiresPermissions("product:category:save")
+    public R save(@RequestBody CategoryEntity[] category){
+        categoryService.saveBatch(Arrays.asList(category));
 
         return R.ok();
     }
