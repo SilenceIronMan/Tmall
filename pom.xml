@@ -29,6 +29,14 @@
         <module>tmall-gateway</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>true</scope>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <!--spring boot 2.2.8-->
