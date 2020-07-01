@@ -2,9 +2,13 @@ package com.ysy.tmall.product.controller;
 
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.R;
+import com.ysy.tmall.common.valid.AddGroup;
+import com.ysy.tmall.common.valid.UpdateGroup;
+import com.ysy.tmall.common.valid.UpdateShowStatusGroup;
 import com.ysy.tmall.product.entity.BrandEntity;
 import com.ysy.tmall.product.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -55,7 +59,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:brand:save")
-    public R save(@Valid @RequestBody BrandEntity brand/**, BindingResult result */) {
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand/**, BindingResult result */) {
 //        if (result.hasErrors()) {
 //            HashMap<String, String> map = new HashMap<>();
 //            // 1 获取校验的错误信息
@@ -79,7 +83,19 @@ public class BrandController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
-    public R update(@RequestBody BrandEntity brand) {
+    public R update(@Validated({UpdateGroup.class}) @RequestBody BrandEntity brand) {
+        brandService.updateById(brand);
+
+        return R.ok();
+    }
+
+
+    /**
+     * 修改显示状态
+     */
+    @RequestMapping("/update/showStatus")
+    //@RequiresPermissions("product:brand:update")
+    public R showStatus(@Validated({UpdateShowStatusGroup.class}) @RequestBody BrandEntity brand) {
         brandService.updateById(brand);
 
         return R.ok();
