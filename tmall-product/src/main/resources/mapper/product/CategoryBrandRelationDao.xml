@@ -5,12 +5,15 @@
 
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.ysy.tmall.product.entity.CategoryBrandRelationEntity" id="categoryBrandRelationMap">
-                    <result property="id" column="id"/>
-                    <result property="brandId" column="brand_id"/>
-                    <result property="catelogId" column="catelog_id"/>
-                    <result property="brandName" column="brand_name"/>
-                    <result property="catelogName" column="catelog_name"/>
-            </resultMap>
+        <result property="id" column="id"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="catelogId" column="catelog_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="catelogName" column="catelog_name"/>
+    </resultMap>
+    <update id="updateCategory">
+        update pms_category_brand_relation set  catelog_name = #{catelogName} where catelog_id = #{catelogId}
+    </update>
 
 
 </mapper>

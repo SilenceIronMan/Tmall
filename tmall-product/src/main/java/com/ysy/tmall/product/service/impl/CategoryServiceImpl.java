@@ -1,5 +1,8 @@
 package com.ysy.tmall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.ysy.tmall.product.entity.CategoryBrandRelationEntity;
+import com.ysy.tmall.product.service.CategoryBrandRelationService;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -18,11 +21,16 @@ import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.product.dao.CategoryDao;
 import com.ysy.tmall.product.entity.CategoryEntity;
 import com.ysy.tmall.product.service.CategoryService;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -67,6 +75,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
 
         return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    @Override
+    @Transactional
+    public void updateCascade(CategoryEntity category) {
+        updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
 

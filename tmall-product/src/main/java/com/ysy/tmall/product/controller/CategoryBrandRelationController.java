@@ -1,15 +1,13 @@
 package com.ysy.tmall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.product.entity.CategoryBrandRelationEntity;
 import com.ysy.tmall.product.service.CategoryBrandRelationService;
@@ -30,6 +28,19 @@ import com.ysy.tmall.common.utils.R;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+
+    /**
+     * 显示品牌id下的所有分类id列表
+     */
+    @GetMapping ("/catelog/list")
+    //@RequiresPermissions("product:categorybrandrelation:list")
+    public R list(@RequestParam("brandId") Long brandId){
+       // PageUtils page = categoryBrandRelationService.queryPage(params);
+        List<CategoryBrandRelationEntity> data = categoryBrandRelationService.list(new QueryWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
+        return R.ok().put("data", data);
+    }
+
 
     /**
      * 列表
@@ -60,8 +71,7 @@ public class CategoryBrandRelationController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:categorybrandrelation:save")
     public R save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation){
-		categoryBrandRelationService.save(categoryBrandRelation);
-
+        categoryBrandRelationService.saveDetail(categoryBrandRelation);
         return R.ok();
     }
 
