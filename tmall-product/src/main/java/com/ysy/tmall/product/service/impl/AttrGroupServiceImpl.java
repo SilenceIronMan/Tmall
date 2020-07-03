@@ -44,7 +44,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             // select * from pms_attr_group where catelog_id = ? and （attr_group_id = key or attr_group_name like '%key%'
 
             QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId);
-            if (StringUtils.isEmpty(key)) {
+            if (StringUtils.isNotEmpty(key)) {
                 wrapper.and(obj -> {
                     obj.eq("attr_group_id", key).like("attr_group_name", key);
 
