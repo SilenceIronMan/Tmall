@@ -3,18 +3,25 @@ package com.ysy.tmall.product;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ysy.tmall.product.entity.BrandEntity;
 import com.ysy.tmall.product.service.BrandService;
+import com.ysy.tmall.product.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 
 @SpringBootTest
+@Slf4j
 class TmallProductApplicationTests {
 
     @Resource
     BrandService brandService;
+
+    @Resource
+    CategoryService categoryService;
 
     @Test
     void contextLoads() {
@@ -29,4 +36,11 @@ class TmallProductApplicationTests {
         brandList.stream().forEach(b -> System.out.println(b));
     }
 
+    @Test
+    void testCategoryPath(){
+
+        Long[] catelogPath = categoryService.findCatelogPath(225L);
+
+        log.info(Arrays.toString(catelogPath));
+    }
 }

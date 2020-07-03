@@ -3,6 +3,8 @@ package com.ysy.tmall.product.service.impl;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -55,6 +57,35 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> asList) {
         // 1.TODO 检查是否有子菜单
         baseMapper.deleteBatchIds(asList);
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+
+        List<Long> paths = new ArrayList<>();
+        List<Long> parentPath = findParentPath(catelogId, paths);
+
+
+        return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+
+    /**
+     * 递归记录自身id 和父id
+     * @param catelogId
+     * @param paths 存储容器
+     * @return
+     */
+    private List<Long> findParentPath(Long catelogId, List<Long> paths) {
+
+        paths.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        Long parentCid = byId.getParentCid();
+        if (parentCid != 0) {
+            findParentPath(parentCid, paths);
+        }
+        Collections.reverse(paths);
+        return paths;
     }
 
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
