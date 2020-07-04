@@ -34,12 +34,16 @@ public class AttrController {
 
     /**
      * 列表
+     * /base/list/{catelogId}
+     * /sale/list/{catelogId}
      */
-    @RequestMapping("/base/list/{catelogId}")
+    @RequestMapping("/{attrType}/list/{catelogId}")
     //@RequiresPermissions("product:attr:list")
-    public R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catelogId") Long catelogId){
+    public R baseAttrList(@RequestParam Map<String, Object> params,
+                          @PathVariable("catelogId") Long catelogId,
+                          @PathVariable("attrType") String attrType){
        // PageUtils page = attrService.queryPage(params);
-        PageUtils page = attrService.queryBaseAttr(params, catelogId);
+        PageUtils page = attrService.queryBaseAttr(params, catelogId, attrType);
         return R.ok().put("page", page);
     }
 
@@ -61,8 +65,8 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
-
+		// AttrEntity attr = attrService.getById(attrId);
+        AttrVo attr = attrService.getAttrInfo(attrId);
         return R.ok().put("attr", attr);
     }
 
@@ -82,9 +86,9 @@ public class AttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
-
+    public R update(@RequestBody AttrVo attr){
+		//attrService.updateById(attr);
+        attrService.updateAttr(attr);
         return R.ok();
     }
 

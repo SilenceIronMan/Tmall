@@ -18,6 +18,12 @@ public class AttrVo {
      * 属性名
      */
     private String attrName;
+
+    /**
+     * 值类型[0-单个值，1-多个值]
+     */
+    private Integer valueType;
+
     /**
      * 是否需要检索[0-不需要，1-需要]
      */
