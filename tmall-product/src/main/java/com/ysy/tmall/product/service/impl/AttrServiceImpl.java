@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -92,15 +93,21 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             // 分组name
             AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = attrAttrgroupRelationDao.selectOne
                     (new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
-            Long attrGroupId = attrAttrgroupRelationEntity.getAttrGroupId();
-            AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrGroupId);
-            attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
-
+            // 因为分组id不是必须项目  属性可能还没有分组
+            if(Objects.nonNull(attrAttrgroupRelationEntity)) {
+                Long attrGroupId = attrAttrgroupRelationEntity.getAttrGroupId();
+                AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrGroupId);
+                attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+            }
 
             // 分类name
             CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
-            String name = categoryEntity.getName();
-            attrRespVo.setCatelogName(name);
+            // 非空判断
+            if(Objects.nonNull(categoryEntity)) {
+                String name = categoryEntity.getName();
+                attrRespVo.setCatelogName(name);
+            }
+
             //attrGroupDao.selectById(attrEntity.)
             return attrRespVo;
         }).collect(Collectors.toList());
