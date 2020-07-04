@@ -1,15 +1,20 @@
 package com.ysy.tmall.product.controller;
 
-
-import com.ysy.tmall.common.utils.PageUtils;
-import com.ysy.tmall.common.utils.R;
-import com.ysy.tmall.product.entity.AttrAttrgroupRelationEntity;
-import com.ysy.tmall.product.service.AttrAttrgroupRelationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.Map;
+
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ysy.tmall.product.entity.AttrAttrgroupRelationEntity;
+import com.ysy.tmall.product.service.AttrAttrgroupRelationService;
+import com.ysy.tmall.common.utils.PageUtils;
+import com.ysy.tmall.common.utils.R;
 
 
 
@@ -18,7 +23,7 @@ import java.util.Map;
  *
  * @author SilenceIronMan
  * @email yinshiyu_2008@126.com
- * @date 2020-06-24 01:03:28
+ * @date 2020-06-27 21:47:45
  */
 @RestController
 @RequestMapping("product/attrattrgrouprelation")

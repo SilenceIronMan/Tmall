@@ -3,6 +3,7 @@ package com.ysy.tmall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.product.entity.AttrEntity;
+import com.ysy.tmall.product.vo.AttrVo;
 
 import java.util.Map;
 
@@ -11,10 +12,18 @@ import java.util.Map;
  *
  * @author SilenceIronMan
  * @email yinshiyu_2008@126.com
- * @date 2020-06-24 01:03:28
+ * @date 2020-06-27 21:47:45
  */
 public interface AttrService extends IService<AttrEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveAttr(AttrVo attr);
+
+    PageUtils queryBaseAttr(Map<String, Object> params, Long catelogId, String attrType);
+
+    AttrVo getAttrInfo(Long attrId);
+
+    void updateAttr(AttrVo attr);
 }
 

@@ -3,18 +3,18 @@
 
 <mapper namespace="com.ysy.tmall.product.dao.SpuInfoDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.ysy.tmall.product.entity.SpuInfoEntity" id="spuInfoMap">
-        <result property="id" column="id"/>
-        <result property="spuName" column="spu_name"/>
-        <result property="spuDescription" column="spu_description"/>
-        <result property="catalogId" column="catalog_id"/>
-        <result property="brandId" column="brand_id"/>
-        <result property="weight" column="weight"/>
-        <result property="publishStatus" column="publish_status"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-    </resultMap>
+                    <result property="id" column="id"/>
+                    <result property="spuName" column="spu_name"/>
+                    <result property="spuDescription" column="spu_description"/>
+                    <result property="catalogId" column="catalog_id"/>
+                    <result property="brandId" column="brand_id"/>
+                    <result property="weight" column="weight"/>
+                    <result property="publishStatus" column="publish_status"/>
+                    <result property="createTime" column="create_time"/>
+                    <result property="updateTime" column="update_time"/>
+            </resultMap>
 
 
 </mapper>

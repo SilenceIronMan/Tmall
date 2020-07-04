@@ -3,15 +3,15 @@
 
 <mapper namespace="com.ysy.tmall.product.dao.AttrGroupDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.ysy.tmall.product.entity.AttrGroupEntity" id="attrGroupMap">
-        <result property="attrGroupId" column="attr_group_id"/>
-        <result property="attrGroupName" column="attr_group_name"/>
-        <result property="sort" column="sort"/>
-        <result property="descript" column="descript"/>
-        <result property="icon" column="icon"/>
-        <result property="catelogId" column="catelog_id"/>
-    </resultMap>
+                    <result property="attrGroupId" column="attr_group_id"/>
+                    <result property="attrGroupName" column="attr_group_name"/>
+                    <result property="sort" column="sort"/>
+                    <result property="descript" column="descript"/>
+                    <result property="icon" column="icon"/>
+                    <result property="catelogId" column="catelog_id"/>
+            </resultMap>
 
 
 </mapper>

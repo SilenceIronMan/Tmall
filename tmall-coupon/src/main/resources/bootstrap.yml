@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: tmall-coupon
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117:1111
+        file-extension: yml
+        namespace: ea46b817-9a31-499e-88e0-bdf19ba13f00
+        group: dev
+        extension-configs:
+          - data-id: tmall-coupon.yml
+            group: dev # 这个group会覆盖上面那个 相当于可以定制化
+            refresh: true #必须 否则不会刷新 默认为false
+
+

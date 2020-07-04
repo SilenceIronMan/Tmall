@@ -1,5 +1,6 @@
 package com.ysy.tmall.product.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -9,10 +10,10 @@ import lombok.Data;
 
 /**
  * 属性分组
- * 
+ *
  * @author SilenceIronMan
  * @email yinshiyu_2008@126.com
- * @date 2020-06-24 01:03:28
+ * @date 2020-06-27 21:47:45
  */
 @Data
 @TableName("pms_attr_group")
@@ -44,5 +45,8 @@ public class AttrGroupEntity implements Serializable {
 	 * 所属分类id
 	 */
 	private Long catelogId;
+
+	@TableField(exist = false)
+	private Long[] catelogPath;
 
 }

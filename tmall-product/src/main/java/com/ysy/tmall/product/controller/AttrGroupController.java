@@ -1,16 +1,23 @@
 package com.ysy.tmall.product.controller;
 
-import com.ysy.tmall.common.utils.PageUtils;
-import com.ysy.tmall.common.utils.R;
-import com.ysy.tmall.product.entity.AttrGroupEntity;
-import com.ysy.tmall.product.service.AttrGroupService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.Map;
 
+//import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.ysy.tmall.product.entity.AttrGroupEntity;
+import com.ysy.tmall.product.service.AttrGroupService;
+import com.ysy.tmall.common.utils.PageUtils;
+import com.ysy.tmall.common.utils.R;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -18,22 +25,25 @@ import java.util.Map;
  *
  * @author SilenceIronMan
  * @email yinshiyu_2008@126.com
- * @date 2020-06-24 01:03:28
+ * @date 2020-06-27 21:47:45
  */
 @RestController
 @RequestMapping("product/attrgroup")
 public class AttrGroupController {
-    @Autowired
+    @Resource
     private AttrGroupService attrGroupService;
+
+    @Resource
+    private CategoryService categoryService;
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @RequestMapping("/list/{catelogId}")
     //@RequiresPermissions("product:attrgroup:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = attrGroupService.queryPage(params);
-
+    public R list(@RequestParam Map<String, Object> params, @PathVariable("catelogId")Long catelogId){
+        // PageUtils page = attrGroupService.queryPage(params);
+        PageUtils page = attrGroupService.queryPage(params, catelogId);
         return R.ok().put("page", page);
     }
 
@@ -46,6 +56,9 @@ public class AttrGroupController {
     public R info(@PathVariable("attrGroupId") Long attrGroupId){
 		AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
 
+        Long catelogId = attrGroup.getCatelogId();
+        Long[] catelogPath = categoryService.findCatelogPath(catelogId);
+        attrGroup.setCatelogPath(catelogPath);
         return R.ok().put("attrGroup", attrGroup);
     }
 

@@ -3,18 +3,18 @@
 
 <mapper namespace="com.ysy.tmall.product.dao.AttrDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.ysy.tmall.product.entity.AttrEntity" id="attrMap">
-        <result property="attrId" column="attr_id"/>
-        <result property="attrName" column="attr_name"/>
-        <result property="searchType" column="search_type"/>
-        <result property="icon" column="icon"/>
-        <result property="valueSelect" column="value_select"/>
-        <result property="attrType" column="attr_type"/>
-        <result property="enable" column="enable"/>
-        <result property="catelogId" column="catelog_id"/>
-        <result property="showDesc" column="show_desc"/>
-    </resultMap>
+                    <result property="attrId" column="attr_id"/>
+                    <result property="attrName" column="attr_name"/>
+                    <result property="searchType" column="search_type"/>
+                    <result property="icon" column="icon"/>
+                    <result property="valueSelect" column="value_select"/>
+                    <result property="attrType" column="attr_type"/>
+                    <result property="enable" column="enable"/>
+                    <result property="catelogId" column="catelog_id"/>
+                    <result property="showDesc" column="show_desc"/>
+            </resultMap>
 
 
 </mapper>
