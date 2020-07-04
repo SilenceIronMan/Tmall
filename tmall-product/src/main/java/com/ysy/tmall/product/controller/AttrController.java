@@ -33,7 +33,7 @@ public class AttrController {
     private AttrService attrService;
 
     /**
-     * 列表
+     * 基本属性 和 sale属性 列表
      * /base/list/{catelogId}
      * /sale/list/{catelogId}
      */
