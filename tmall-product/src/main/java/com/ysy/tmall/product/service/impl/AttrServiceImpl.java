@@ -1,6 +1,5 @@
 package com.ysy.tmall.product.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,7 +17,6 @@ import com.ysy.tmall.product.entity.AttrGroupEntity;
 import com.ysy.tmall.product.entity.CategoryEntity;
 import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.service.CategoryService;
-import com.ysy.tmall.product.vo.AttrRelationVo;
 import com.ysy.tmall.product.vo.AttrRespVo;
 import com.ysy.tmall.product.vo.AttrVo;
 import org.apache.commons.lang.StringUtils;
@@ -38,9 +36,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Resource
     private AttrGroupDao attrGroupDao;
-
-    @Resource
-    private AttrDao attrDao;
 
     @Resource
     private CategoryDao categoryDao;
@@ -65,12 +60,14 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         BeanUtils.copyProperties(attr, attrEntity);
         // 1.保存基本数据
         this.save(attrEntity);
+        // 属性分组非必选项 可能为空 这时候不用插入中间表
+        Long attrGroupId = attr.getAttrGroupId();
         // 销售属性没有分组 不需要存中间表 (为什么会有中间表也是因为分组的原因 才把字段拆开 使表更合理化)
-        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
+        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() && attrGroupId != null) {
             // 2.保存关联关系
             AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
 
-            attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
+            attrAttrgroupRelationEntity.setAttrGroupId(attrGroupId);
             attrAttrgroupRelationEntity.setAttrId(attrEntity.getAttrId());
             attrAttrgroupRelationDao.insert(attrAttrgroupRelationEntity);
         }
@@ -157,10 +154,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         this.updateById(attrEntity);
 
 
-        // base attr 更新 分组
-        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
+        // base attr 更新 分组 (因为分组id不是必须项目 没有时不能插入中间表)
+        Long attrGroupId = attr.getAttrGroupId();
+        if (attrEntity.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() && Objects.nonNull(attrGroupId)) {
             AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
-            attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
+            attrAttrgroupRelationEntity.setAttrGroupId(attrGroupId);
             Long attrId = attr.getAttrId();
             Integer attrAttrgroupCount = attrAttrgroupRelationDao.selectCount(new QueryWrapper<AttrAttrgroupRelationEntity>()
                     .eq("attr_id", attrId));
@@ -214,10 +212,21 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 attrAttrgroupRelationEntity.getAttrId()).collect(Collectors.toList());
 
         //4 从当前分类所有属性中删除这些属性 (并且是基础属性)
+        String key = (String) params.get("key");
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("attr_type",
+                ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
+        if (StringUtils.isNotEmpty(key)) {
+            wrapper.and(w -> {
+                w.eq("attr_id", key).or().like("attr_name", key);
+            });
+        }
+        if (attrIds.size() > 0) {
+            wrapper.notIn("attr_id", attrIds);
+        }
         IPage<AttrEntity> page = this.page(
                 new Query<AttrEntity>().getPage(params),
-                new QueryWrapper<AttrEntity>().notIn("attr_id", attrIds)
-                        .eq("attr_type", ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()));
+                wrapper
+        );
 
         return new PageUtils(page);
     }

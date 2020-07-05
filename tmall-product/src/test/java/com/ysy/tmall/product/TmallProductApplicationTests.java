@@ -1,10 +1,11 @@
 package com.ysy.tmall.product;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ysy.tmall.common.to.producttocoupon.SpuBoundsTO;
 import com.ysy.tmall.product.dao.AttrGroupDao;
 import com.ysy.tmall.product.entity.AttrGroupEntity;
 import com.ysy.tmall.product.entity.BrandEntity;
-import com.ysy.tmall.product.service.AttrGroupService;
+import com.ysy.tmall.product.feign.CouponFeignService;
 import com.ysy.tmall.product.service.BrandService;
 import com.ysy.tmall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +30,9 @@ class TmallProductApplicationTests {
 
     @Resource
     CategoryService categoryService;
+
+    @Resource
+    CouponFeignService couponFeignService;
 
     @Test
     void contextLoads() {
@@ -54,9 +59,19 @@ class TmallProductApplicationTests {
     @Test
     void testSelectOne(){
 
-        AttrGroupEntity catelog_id = attrGroupDao.selectOne(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", 225));
+        AttrGroupEntity catelog_id = attrGroupDao.selectOne(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", 225).last("LIMIT 1"));
 
         log.info(catelog_id.toString());
     }
+
+    @Test
+    void testFeinCoupon() {
+        SpuBoundsTO spuBoundsTO = new SpuBoundsTO();
+        spuBoundsTO.setSpuId(22299L);
+        spuBoundsTO.setBuyBounds(new BigDecimal("20"));
+        spuBoundsTO.setGrowBounds(new BigDecimal("30"));
+        couponFeignService.saveSpuBounds(spuBoundsTO);
+    }
+
 
 }

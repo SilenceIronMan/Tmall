@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ysy.tmall.product.entity.AttrEntity;
 import com.ysy.tmall.product.service.AttrAttrgroupRelationService;
 import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.service.CategoryService;
+import com.ysy.tmall.product.vo.AttrGroupWithAttrRespVo;
 import com.ysy.tmall.product.vo.AttrRelationVo;
-import com.ysy.tmall.product.vo.AttrVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,12 +50,27 @@ public class AttrGroupController {
     private AttrAttrgroupRelationService attrAttrgroupRelationService;
 
     /**
+     * 获取分类下所有分组&关联属性（基本屬性）
+     * @param catelogId 分類id
+     * @return
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupwithattrList(@PathVariable("catelogId") Long catelogId) {
+
+        List<AttrGroupWithAttrRespVo> attrRelationList= attrGroupService.getAttrGroupWithattrList(catelogId);
+
+        return R.ok().put("data", attrRelationList);
+
+    }
+
+
+    /**
      * 获取当前属性分组所有关联属性
      * @param attrGroupId
      * @return
      */
     @GetMapping("/{attrGroupId}/attr/relation")
-    public R getttrRelation(@PathVariable Long attrGroupId) {
+    public R getttrRelation(@PathVariable("attrGroupId") Long attrGroupId) {
 
         List<AttrEntity> attrRelationList= attrService.listAttrRelation(attrGroupId);
 

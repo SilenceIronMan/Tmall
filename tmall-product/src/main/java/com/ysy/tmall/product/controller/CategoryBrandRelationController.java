@@ -3,9 +3,11 @@ package com.ysy.tmall.product.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ysy.tmall.product.entity.BrandEntity;
+import com.ysy.tmall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +42,25 @@ public class CategoryBrandRelationController {
         List<CategoryBrandRelationEntity> data = categoryBrandRelationService.list(new QueryWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
         return R.ok().put("data", data);
     }
+
+    /**
+     * 获取当前分类下的所有品牌列表
+     * @param catId 分类id
+     * @return
+     */
+    @GetMapping ("/brands/list")
+    public R listBrands(@RequestParam("catId") Long catId){
+        // PageUtils page = ecategoryBrandRelationService.queryPage(params);
+        List<BrandEntity> categoryBrandRelationEntities = categoryBrandRelationService.getBrandList(catId);
+        List<BrandVo> data = categoryBrandRelationEntities.stream().map(categoryBrandRelationEntity -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(categoryBrandRelationEntity.getBrandId());
+            brandVo.setBrandName(categoryBrandRelationEntity.getName());
+            return brandVo;
+        }).collect(Collectors.toList());
+        return R.ok().put("data", data);
+    }
+
 
 
     /**
