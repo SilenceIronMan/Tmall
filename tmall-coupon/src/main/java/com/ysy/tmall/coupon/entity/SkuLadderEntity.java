@@ -5,12 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
 /**
  * 商品阶梯价格
- * 
+ *
  * @author SilenceIronMan
  * @email yinshiyu_2008@126.com
  * @date 2020-06-26 21:41:17
@@ -26,7 +25,7 @@ public class SkuLadderEntity implements Serializable {
 	@TableId
 	private Long id;
 	/**
-	 * spu_id
+	 * sku_id
 	 */
 	private Long skuId;
 	/**

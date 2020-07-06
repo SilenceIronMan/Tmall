@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.common.to.producttocoupon.SkuReductionTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.coupon.entity.SkuFullReductionEntity;
 import com.ysy.tmall.coupon.service.SkuFullReductionService;
@@ -30,6 +27,19 @@ import com.ysy.tmall.common.utils.R;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+
+    /**
+     * 保存优惠 sku 满减, 打折, 以及会员价格
+     */
+    @PostMapping("/saveskureduction")
+    //@RequiresPermissions("coupon:skufullreduction:list")
+    public R saveSkuReduction(@RequestBody SkuReductionTO skuReductionTO){
+        skuFullReductionService.saveSkuReduction(skuReductionTO);
+
+        return R.ok();
+    }
+
 
     /**
      * 列表

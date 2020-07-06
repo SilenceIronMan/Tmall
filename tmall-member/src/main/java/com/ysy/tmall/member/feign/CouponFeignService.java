@@ -1,4 +1,4 @@
-package com.ysy.tmall.member.Feign;
+package com.ysy.tmall.member.feign;
 
 import com.ysy.tmall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
