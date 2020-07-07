@@ -160,11 +160,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 List<SkuImagesEntity> skuImagesEntities = skuImage
                         .stream().filter(image -> StringUtils.isNotEmpty(image.getImgUrl()))
                         .map(image -> {
-                    SkuImagesEntity skuImagesEntity = new SkuImagesEntity();
-                    BeanUtils.copyProperties(image, skuImagesEntity);
-                    skuImagesEntity.setSkuId(skuId);
-                    return skuImagesEntity;
-                }).collect(Collectors.toList());
+                            SkuImagesEntity skuImagesEntity = new SkuImagesEntity();
+                            BeanUtils.copyProperties(image, skuImagesEntity);
+                            skuImagesEntity.setSkuId(skuId);
+                            return skuImagesEntity;
+                        }).collect(Collectors.toList());
                 skuImagesService.saveBatch(skuImagesEntities);
 
                 // 6.3 sku的销售属性信息 pms_sku_sale_attr_value
@@ -198,10 +198,49 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }
 
 
+    }
 
+    @Override
+    public PageUtils listSpuInfo(Map<String, Object> params) {
+        /**
+         * {
+         *    page: 1,//当前页码
+         *    limit: 10,//每页记录数
+         *    sidx: 'id',//排序字段
+         *    order: 'asc/desc',//排序方式
+         *    key: '华为',//检索关键字
+         *    catelogId: 6,//三级分类id
+         *    brandId: 1,//品牌id
+         *    status: 0,//商品状态
+         * }
+         */
+        QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<>();
+        //三级分类id
+        String catelogId = (String) params.get("catelogId");
+        if (StringUtils.isNotEmpty(catelogId) && !"0".equals(catelogId)) {
+            wrapper.eq("catalog_id", catelogId);
+        }
+        //品牌id
+        String brandId = (String) params.get("brandId");
+        if (StringUtils.isNotEmpty(brandId) && !"0".equals(brandId  )) {
+            wrapper.eq("brand_Id", brandId);
+        }
+        //商品状态
+        String status = (String) params.get("status");
+        if (StringUtils.isNotEmpty(status)) {
+            wrapper.eq("publish_status", status);
+        }
+        // 检索关键字
 
+        String key = (String) params.get("key");
+        if (StringUtils.isNotEmpty(key)) {
+            wrapper.and(w -> w.eq("id", key).or().like("spu_name", key));
+        }
 
+        IPage<SpuInfoEntity> page = this.page(new Query<SpuInfoEntity>().getPage(params),
+                wrapper);
 
+        return new PageUtils(page);
     }
 
 }
