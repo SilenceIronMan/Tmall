@@ -1,5 +1,7 @@
 package com.ysy.tmall.ware.service.impl;
 
+import com.ysy.tmall.ware.entity.WareInfoEntity;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,9 +22,23 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<WareSkuEntity> wrapper = new QueryWrapper<>();
+
+        String wareId = (String) params.get("wareId");
+        if (StringUtils.isNotEmpty(wareId)) {
+            wrapper.eq("ware_id", wareId);
+
+        }
+
+        String skuId = (String) params.get("skuId");
+        if (StringUtils.isNotEmpty(skuId)) {
+            wrapper.eq("sku_id", skuId);
+
+        }
+
         IPage<WareSkuEntity> page = this.page(
                 new Query<WareSkuEntity>().getPage(params),
-                new QueryWrapper<WareSkuEntity>()
+                wrapper
         );
 
         return new PageUtils(page);
