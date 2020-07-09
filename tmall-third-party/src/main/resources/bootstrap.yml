@@ -11,8 +11,8 @@ spring:
             group: DEFAULT_GROUP
             refresh: true #必须 否则不会刷新 默认为false
 #    alicloud: 配置在naco config上
-#      access-key: LTAI4G1vepkh4uttimSzMm3w
-#      secret-key: Ln03BKXWS3MF7UdMOPJcxknsuPuPPE
+#      access-key: ************
+#      secret-key: ************
 #      bucket-name: tmall-ysy
 #      oss:
 #        endpoint: oss-cn-shanghai.aliyuncs.com
