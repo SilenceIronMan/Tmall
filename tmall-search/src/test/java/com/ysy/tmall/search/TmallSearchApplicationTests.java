@@ -59,6 +59,7 @@ class TmallSearchApplicationTests {
     void searchData() throws IOException {
         SearchRequest searchRequest = new SearchRequest();
         // 指定索引
+
         searchRequest.indices("bank");
         // 指定DSL 检索条件
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
