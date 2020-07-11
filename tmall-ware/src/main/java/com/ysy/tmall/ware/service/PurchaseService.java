@@ -3,6 +3,7 @@ package com.ysy.tmall.ware.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.ware.entity.PurchaseEntity;
+import com.ysy.tmall.ware.vo.PuchaseDoneVO;
 import com.ysy.tmall.ware.vo.PurchaseVO;
 
 import java.util.List;
@@ -24,5 +25,7 @@ public interface PurchaseService extends IService<PurchaseEntity> {
     void mergePurchase(PurchaseVO purchaseVO);
 
     void received(List<Long> purchaseIds);
+
+    void done(PuchaseDoneVO puchaseDoneVO);
 }
 

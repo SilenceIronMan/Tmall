@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.ware.vo.PuchaseDoneVO;
 import com.ysy.tmall.ware.vo.PurchaseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,19 @@ import com.ysy.tmall.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+
+
+    /**
+     * 完成采購
+     */
+    @RequestMapping("/done")
+    //@RequiresPermissions("ware:purchase:save")
+    public R done(@RequestBody PuchaseDoneVO puchaseDoneVO){
+
+        purchaseService.done(puchaseDoneVO);
+
+        return R.ok();
+    }
 
     /**
      * 领取采购单

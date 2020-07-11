@@ -1,20 +1,20 @@
 package com.ysy.tmall.ware.service.impl;
 
-import com.ysy.tmall.ware.entity.WareInfoEntity;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
-
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
-
 import com.ysy.tmall.ware.dao.WareSkuDao;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
 import com.ysy.tmall.ware.service.WareSkuService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 
 @Service("wareSkuService")
@@ -43,5 +43,29 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
         return new PageUtils(page);
     }
+
+    @Override
+    @Transactional
+    public void addStocks(Long skuId, Long wareId, Integer stock) {
+
+        WareSkuEntity wareSkuEntity = this.baseMapper
+                .selectOne(new QueryWrapper<WareSkuEntity>()
+                        .eq("sku_id", skuId).eq("ware_id", wareId));
+        if (Objects.isNull(wareSkuEntity)) {
+            WareSkuEntity newWare = new WareSkuEntity();
+            newWare.setSkuId(skuId);
+            newWare.setWareId(wareId);
+            newWare.setSkuName("");
+            newWare.setStock(stock);
+            this.save(newWare);
+        } else {
+
+            wareSkuEntity.setStock(wareSkuEntity.getStock() + stock);
+            this.updateById(wareSkuEntity);
+
+        }
+
+    }
+
 
 }

@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 129.211.93.117:1111
+  application:
+    name: tmall-search
+
+
+
+server:
+  port: 8010
+logging:
+  level:
+    com.ysy.tmall: debug
+
+

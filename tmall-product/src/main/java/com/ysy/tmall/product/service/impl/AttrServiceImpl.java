@@ -11,10 +11,7 @@ import com.ysy.tmall.product.dao.AttrAttrgroupRelationDao;
 import com.ysy.tmall.product.dao.AttrDao;
 import com.ysy.tmall.product.dao.AttrGroupDao;
 import com.ysy.tmall.product.dao.CategoryDao;
-import com.ysy.tmall.product.entity.AttrAttrgroupRelationEntity;
-import com.ysy.tmall.product.entity.AttrEntity;
-import com.ysy.tmall.product.entity.AttrGroupEntity;
-import com.ysy.tmall.product.entity.CategoryEntity;
+import com.ysy.tmall.product.entity.*;
 import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.service.CategoryService;
 import com.ysy.tmall.product.vo.AttrRespVo;
@@ -230,5 +227,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
         return new PageUtils(page);
     }
+
 
 }

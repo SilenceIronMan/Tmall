@@ -27,6 +27,7 @@
         <module>renren-generator</module>
         <module>tmall-common</module>
         <module>tmall-gateway</module>
+        <module>tmall-search</module>
     </modules>
 
     <dependencies>

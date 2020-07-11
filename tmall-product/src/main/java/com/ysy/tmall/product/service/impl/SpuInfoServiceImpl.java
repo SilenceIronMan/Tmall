@@ -102,6 +102,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         List<ProductAttrValueEntity> productAttrValueEntities = baseAttrs.stream().map(baseAttr -> {
             ProductAttrValueEntity productAttrValueEntity = new ProductAttrValueEntity();
             Long attrId = baseAttr.getAttrId();
+            productAttrValueEntity.setSpuId(spuId);
             productAttrValueEntity.setAttrId(attrId);
             AttrEntity attrEntity = attrService.getById(attrId);
             productAttrValueEntity.setAttrName(attrEntity.getAttrName());
