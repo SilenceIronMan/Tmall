@@ -2,6 +2,7 @@ package com.ysy.tmall.search;
 
 import com.alibaba.fastjson.JSON;
 import com.ysy.tmall.search.config.ElasticSearchConfig;
+import com.ysy.tmall.search.entity.account;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexRequest;
@@ -82,7 +83,8 @@ class TmallSearchApplicationTests {
         SearchHit[] hits1 = hits.getHits();
         for (SearchHit documentFields : hits1) {
             String sourceAsString = documentFields.getSourceAsString();
-            System.out.println(sourceAsString);
+            account account = JSON.parseObject(sourceAsString, account.class);
+            System.out.println(account);
         }
         System.out.println(search);
     }

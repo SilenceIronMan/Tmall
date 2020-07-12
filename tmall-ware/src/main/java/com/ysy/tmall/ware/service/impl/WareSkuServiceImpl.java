@@ -8,6 +8,7 @@ import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.ware.dao.WareSkuDao;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
 import com.ysy.tmall.ware.service.WareSkuService;
+import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service("wareSkuService")
@@ -65,6 +67,26 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
         }
 
+    }
+
+    @Override
+    public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
+
+        List<SkuHasStockVo> skuHasStockVos = skuIds.stream().map(skuId -> {
+            SkuHasStockVo skuHasStockVo = new SkuHasStockVo();
+
+            Long count = baseMapper.getSkuStock(skuId);
+            skuHasStockVo.setSkuId(skuId);
+
+            if (count > 0) {
+                skuHasStockVo.setHasStock(true);
+            } else {
+                skuHasStockVo.setHasStock(false);
+            }
+
+            return skuHasStockVo;
+        }).collect(Collectors.toList());
+        return skuHasStockVos;
     }
 
 

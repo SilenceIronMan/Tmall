@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ysy.tmall.common.constant.AttrConstant;
 import com.ysy.tmall.common.constant.ProductConstant;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
@@ -226,6 +227,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<Long> selectSerchAttrIds(List<Long> baseAttrIds) {
+
+        List<Long> attrIds = this.baseMapper.selectSerchAttrIds(baseAttrIds);
+        return attrIds;
     }
 
 

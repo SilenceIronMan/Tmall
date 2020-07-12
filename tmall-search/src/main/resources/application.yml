@@ -9,7 +9,7 @@ spring:
 
 
 server:
-  port: 8010
+  port: 8011
 logging:
   level:
     com.ysy.tmall: debug

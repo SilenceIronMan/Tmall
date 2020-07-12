@@ -6,6 +6,7 @@ import com.ysy.tmall.product.dao.AttrGroupDao;
 import com.ysy.tmall.product.entity.AttrGroupEntity;
 import com.ysy.tmall.product.entity.BrandEntity;
 import com.ysy.tmall.product.feign.CouponFeignService;
+import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.service.BrandService;
 import com.ysy.tmall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +35,9 @@ class TmallProductApplicationTests {
 
     @Resource
     CouponFeignService couponFeignService;
+
+    @Resource
+    AttrService attrService;
 
     @Test
     void contextLoads() {
@@ -71,6 +76,12 @@ class TmallProductApplicationTests {
         spuBoundsTO.setBuyBounds(new BigDecimal("20"));
         spuBoundsTO.setGrowBounds(new BigDecimal("30"));
         couponFeignService.saveSpuBounds(spuBoundsTO);
+    }
+
+    @Test
+    void testSearchAttr() {
+        List<Long> attrIds = attrService.selectSerchAttrIds(Arrays.asList(1L));
+        System.out.println(attrIds);
     }
 
 
