@@ -15,6 +15,23 @@
                     <result property="catelogId" column="catelog_id"/>
                     <result property="showDesc" column="show_desc"/>
             </resultMap>
+    <select id="selectSerchAttrIds" resultType="java.lang.Long">
+        SELECT
+            attr_id
+        FROM
+            pms_attr
+        <where>
+        <if test="list != null and list.size() > 0">
+            attr_id in
+            <foreach collection="list" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+            AND
+            search_type = 1
+        </where>
+
+    </select>
 
 
 </mapper>

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.product.entity.AttrEntity;
+import com.ysy.tmall.product.entity.ProductAttrValueEntity;
 import com.ysy.tmall.product.vo.AttrRelationVo;
 import com.ysy.tmall.product.vo.AttrVo;
 
@@ -32,5 +33,7 @@ public interface AttrService extends IService<AttrEntity> {
     List<AttrEntity> listAttrRelation(Long attrGroupId);
 
     PageUtils getAttrNoRelation(Map<String, Object> params, Long attrgroupId);
+
+    List<Long> selectSerchAttrIds(List<Long> baseAttrIds);
 }
 

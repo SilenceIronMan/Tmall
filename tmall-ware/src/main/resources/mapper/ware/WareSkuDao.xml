@@ -11,7 +11,18 @@
                     <result property="stock" column="stock"/>
                     <result property="skuName" column="sku_name"/>
                     <result property="stockLocked" column="stock_locked"/>
-            </resultMap>
+    </resultMap>
+    <select id="getSkuStock" resultType="java.lang.Long">
+        SELECT
+        IFNULL(
+		  SUM(stock - IFNULL(stock_locked, 0)),
+		  0
+	    )
+        FROM
+            wms_ware_sku
+        WHERE
+            sku_id = #{skuId}
+    </select>
 
 
 </mapper>

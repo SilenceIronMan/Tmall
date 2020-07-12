@@ -1,9 +1,13 @@
 package com.ysy.tmall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ysy.tmall.product.entity.ProductAttrValueEntity;
+import com.ysy.tmall.product.service.ProductAttrValueService;
 import com.ysy.tmall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,7 @@ import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.R;
 
+import javax.annotation.Resource;
 
 
 /**
@@ -32,6 +37,31 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    @Resource
+    private ProductAttrValueService productAttrValueService;
+
+    /**
+     * 修改
+     */
+    @RequestMapping("/update/{spuId}")
+    //@RequiresPermissions("product:attr:update")
+    public R updateSpuInfo(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> attrs){
+        //attrService.updateById(attr);
+        productAttrValueService.updateSpuInfo(spuId, attrs);
+        return R.ok();
+    }
+
+
+    /**
+     * 获取spu商品规格属性
+     */
+    @RequestMapping("/base/listforspu/{spuId}")
+    //@RequiresPermissions("product:attr:list")
+    public R listForSpu(@PathVariable("spuId") Long spuId){
+       // PageUtils page = attrService.queryPage(params);
+        List<ProductAttrValueEntity> data = productAttrValueService.listForSpu(spuId);
+        return R.ok().put("data", data);
+    }
     /**
      * 基本属性 和 sale属性 列表
      * /base/list/{catelogId}
