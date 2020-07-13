@@ -1,5 +1,6 @@
 package com.ysy.tmall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -311,8 +312,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         Map<Long, Boolean> stockMap = null;
         try {
-            R<List<SkuHasStockVo>> skuHasStock = wareFeignService.getSkuHasStock(skuIds);
-            List<SkuHasStockVo> stockData = skuHasStock.getData();
+            R skuHasStock = wareFeignService.getSkuHasStock(skuIds);
+            TypeReference<List<SkuHasStockVo>> typeReference = new TypeReference<List<SkuHasStockVo>>() {
+            };
+            List<SkuHasStockVo> stockData = skuHasStock.getData(typeReference);
             stockMap = stockData.stream()
                     .collect(
                             Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock,

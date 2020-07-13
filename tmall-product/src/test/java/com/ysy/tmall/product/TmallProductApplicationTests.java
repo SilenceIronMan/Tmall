@@ -1,5 +1,7 @@
 package com.ysy.tmall.product;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ysy.tmall.common.to.producttocoupon.SpuBoundsTO;
 import com.ysy.tmall.product.dao.AttrGroupDao;
@@ -84,5 +86,15 @@ class TmallProductApplicationTests {
         System.out.println(attrIds);
     }
 
+    @Test
+    void testReference() {
 
+        ArrayList<Integer> objects = new ArrayList<>();
+        this.getClass();
+        String s = JSON.toJSONString(objects);
+        TypeReference<ArrayList<Integer>> typeReference = new TypeReference<ArrayList<Integer>>() {
+        };
+        JSON.parseObject(s, typeReference);
+        typeReference.getClass().getGenericSuperclass();
+    }
 }
