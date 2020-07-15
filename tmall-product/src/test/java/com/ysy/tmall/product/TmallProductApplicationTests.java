@@ -14,12 +14,15 @@ import com.ysy.tmall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 @SpringBootTest
@@ -40,6 +43,9 @@ class TmallProductApplicationTests {
 
     @Resource
     AttrService attrService;
+
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Test
     void contextLoads() {
@@ -88,7 +94,6 @@ class TmallProductApplicationTests {
 
     @Test
     void testReference() {
-
         ArrayList<Integer> objects = new ArrayList<>();
         this.getClass();
         String s = JSON.toJSONString(objects);
@@ -96,5 +101,16 @@ class TmallProductApplicationTests {
         };
         JSON.parseObject(s, typeReference);
         typeReference.getClass().getGenericSuperclass();
+    }
+
+
+    @Test
+    void testRedis() {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+
+        ops.set("hello", "world!" + UUID.randomUUID());
+
+        String hello = ops.get("hello");
+        log.info(hello + "redis");
     }
 }

@@ -4,7 +4,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 129.211.93.117:1111
+        server-addr: 129.211.93.117
         namespace: 920964f2-ced0-41d0-9571-feebc1d779bb
 
     gateway:
@@ -44,5 +44,13 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
 
+        # 按主机地址过滤 (我这边因为服务器没申请域名 就不从nginx转发了 直接用网关接收)
+        # 注意如果用了nginx 的话 代理转发时会抛弃一些信息 比如host信息 会导致这个规则匹配不到
+        # 需要更改nginx 配置 (括号里的内容 只是提醒我自己 跟这个问题无关 nginx中server_name 为host域名)
+        # 在proxy_pass上面一行添加  proxy_set_header Host $host;
+        - id: tmall_host_route
+          uri: lb://tmall-product
+          predicates:
+            - Host=**.ysymall.com
 
 

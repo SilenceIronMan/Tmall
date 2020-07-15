@@ -7,11 +7,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 129.211.93.117:1111
+        server-addr: 129.211.93.117
   application:
     name: tmall-product
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false
+  redis:
+    host: 129.211.93.117
 
 
 mybatis-plus:
