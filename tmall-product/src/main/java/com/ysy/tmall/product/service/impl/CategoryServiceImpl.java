@@ -171,9 +171,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         "else " +
                         "return 0 " +
                         "end";
-                Integer unLock = stringRedisTemplate
+                Long unLock = stringRedisTemplate
                         .execute(new DefaultRedisScript<>(script,
-                                Integer.class),
+                                Long.class),
                                 Arrays.asList("categoryLock"), token);
             }
 
