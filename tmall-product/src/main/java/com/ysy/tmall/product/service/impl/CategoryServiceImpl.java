@@ -120,6 +120,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         Map<String, List<Catalog2Vo>> map;
         // 缓存没有
         if (StringUtils.isEmpty(categorys)) {
+            log.info("缓存未命中........将要去查询数据库..");
             // 在锁里面 进行redis Set 值 防止 释放了锁 但是redis 却还没set
             map = getCatalogJsonFromDbWithRedisLock();
 
