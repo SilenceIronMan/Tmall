@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,9 @@ public class IndexController {
 
     @Resource
     private RedissonClient redisson;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @GetMapping(value = {"/", "/index.html"})
     public String indexPage(Model model){
@@ -95,6 +99,8 @@ public class IndexController {
             rLock.lock();
             log.info("写锁加锁成功...." + Thread.currentThread().getId());
             s = UUID.randomUUID().toString();
+
+            stringRedisTemplate.opsForValue().set("writeValue", s);
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -118,7 +124,7 @@ public class IndexController {
             // 改数据加写锁,读数据加读锁
             rLock.lock();
             log.info("读锁加锁成功...." + Thread.currentThread().getId());
-            s = UUID.randomUUID().toString();
+            s = stringRedisTemplate.opsForValue().get("writeValue");
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
