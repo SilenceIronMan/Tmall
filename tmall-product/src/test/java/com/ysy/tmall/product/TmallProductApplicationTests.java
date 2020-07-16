@@ -13,6 +13,9 @@ import com.ysy.tmall.product.service.BrandService;
 import com.ysy.tmall.product.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.RedisClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 @SpringBootTest
@@ -46,6 +50,9 @@ class TmallProductApplicationTests {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    RedissonClient redissonClient;
 
     @Test
     void contextLoads() {
@@ -109,8 +116,23 @@ class TmallProductApplicationTests {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
 
         ops.set("hello", "world!" + UUID.randomUUID());
-
+        System.out.println(redissonClient);
         String hello = ops.get("hello");
         log.info(hello + "redis");
+    }
+
+    @Test
+    void testRedisLock() {
+        RLock lock = redissonClient.getLock("test-lock");
+        lock.lock();
+        try {
+            log.info("redis 锁");
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+
+            lock.unlock();
+        }
     }
 }
