@@ -6,6 +6,7 @@ import com.ysy.tmall.product.vo.web.Catalog2Vo;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
+import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -134,6 +135,44 @@ public class IndexController {
         }
         return  s;
 
+    }
+
+    /**
+     * 信号量 占车位
+     * 信号量可以用作分布式限流
+     * @return
+     * @throws InterruptedException
+     */
+    @GetMapping(value = "/park")
+    @ResponseBody
+    public String park() throws InterruptedException {
+        RSemaphore semaphore = redisson.getSemaphore("park");
+
+//        semaphore.acquire();
+        boolean b = semaphore.tryAcquire();
+        if (b) {
+            // 执行业务
+        } else {
+            return "error";
+        }
+
+        return "park";
+
+    }
+
+
+    /**
+     * 信号量 离开车位
+     * @return
+     */
+    @GetMapping(value = "/leave")
+    @ResponseBody
+    public String leave() {
+        RSemaphore semaphore = redisson.getSemaphore("park");
+
+        semaphore.release();
+
+        return "leave";
     }
 
 }

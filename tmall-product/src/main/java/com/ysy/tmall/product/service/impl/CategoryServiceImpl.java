@@ -5,7 +5,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mysql.cj.util.TimeUtil;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.product.dao.CategoryDao;
@@ -15,7 +14,11 @@ import com.ysy.tmall.product.service.CategoryService;
 import com.ysy.tmall.product.vo.web.Catalog2Vo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -38,6 +41,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Resource
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    @Resource
+    private RedissonClient redisson;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -86,20 +92,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     @Transactional
+    // @CacheEvict 失效模式
+    // @CachePut 雙寫模式
     public void updateCascade(CategoryEntity category) {
         updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
     @Override
+    @Cacheable(value = {"category"}, key = "#root.methodName")
     public List<CategoryEntity> getLevel1Categorys() {
-
+        log.info("调用getLevel1Categorys");
         List<CategoryEntity> categoryEntities = this.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0L));
         return categoryEntities;
     }
 
     /**
-     *
      * @return
      */
     @Override
@@ -122,35 +130,65 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         if (StringUtils.isEmpty(categorys)) {
             log.info("缓存未命中........将要去查询数据库..");
             // 在锁里面 进行redis Set 值 防止 释放了锁 但是redis 却还没set
-            map = getCatalogJsonFromDbWithRedisLock();
+            map = getCatalogJsonFromDbWithRedissonLock();
 
         } else {
             log.info("缓存命中........直接返回....");
-            map = JSON.parseObject(categorys, new TypeReference<Map<String, List<Catalog2Vo>>>(){}.getType());
+            map = JSON.parseObject(categorys, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+            }.getType());
         }
 
 
-
-
-
-
-        return  map;
+        return map;
     }
 
+
+    /**
+     *
+     * 缓存数据如何保持和数据库一致性
+     * 1. 双写模式 (会产生脏数据)
+     * 2. 失效模式 (推荐)(担心读到旧数据 可加分布式读写锁)
+     * 设置了过期时间, 能保持数据最终一致性
+     * @return
+     */
+    public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedissonLock() {
+        // 1.锁的名字 锁的粒度 越细越快
+        // 锁的粒度 如锁1号商品 取名为 product-1-lock
+        RLock categoryLock = redisson.getLock("categoryLock");
+        // 锁
+        categoryLock.lock();
+        log.info("获取分布式锁-----------");
+
+        Map<String, List<Catalog2Vo>> categoryFromDb = null;
+
+        try {
+            categoryFromDb = getCategoryFromDb();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 解锁
+            categoryLock.unlock();
+            log.info("分布式锁解锁-----------");
+        }
+
+
+        return categoryFromDb;
+    }
 
     /**
      * synchronized 本地锁 只会锁当前JVM 分布式下多个jvm机器 你锁不了
      * (就会多放走多个请求 (不过影响不大)) 解决方案 是采用分布式锁
      * 从数据库查询 (加锁 防止击穿)
+     *
      * @return
      */
-    public  Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedisLock() {
+    public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithRedisLock() {
 
         // 唯一区分
         String token = UUID.randomUUID().toString();
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         // 尝试加锁并设置过期时间
-        Boolean categoryLock = ops.setIfAbsent("categoryLock", token,  300, TimeUnit.SECONDS);
+        Boolean categoryLock = ops.setIfAbsent("categoryLock", token, 300, TimeUnit.SECONDS);
 
         if (categoryLock) { // 加锁成功
             Map<String, List<Catalog2Vo>> categoryFromDb;
@@ -174,7 +212,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         "end";
                 Long unLock = stringRedisTemplate
                         .execute(new DefaultRedisScript<>(script,
-                                Long.class),
+                                        Long.class),
                                 Arrays.asList("categoryLock"), token);
             }
 
@@ -194,15 +232,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 本地锁 synchronized 分布式下不够完善
+     *
      * @return
      */
-    public  Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithLocalLock () {
+    public Map<String, List<Catalog2Vo>> getCatalogJsonFromDbWithLocalLock() {
         synchronized (this) {
             return getCategoryFromDb();
         }
 
     }
-
 
 
     private Map<String, List<Catalog2Vo>> getCategoryFromDb() {
@@ -212,7 +250,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         String categorys = ops.get("categorys");
         if (StringUtils.isNotEmpty(categorys)) {
             log.info("缓存命中........直接返回....");
-            Map<String, List<Catalog2Vo>> redisMap = JSON.parseObject(categorys, new TypeReference<Map<String, List<Catalog2Vo>>>(){}.getType());
+            Map<String, List<Catalog2Vo>> redisMap = JSON.parseObject(categorys, new TypeReference<Map<String, List<Catalog2Vo>>>() {
+            }.getType());
             return redisMap;
         }
         log.info("缓存未命中........查询数据库.........");
@@ -253,6 +292,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 根据父id查询分类列表
+     *
      * @param categoryEntityList
      * @param parentCid
      * @return

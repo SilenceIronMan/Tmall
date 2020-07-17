@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.redisson.client.RedisClient;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -54,6 +54,9 @@ class TmallProductApplicationTests {
     @Resource
     RedissonClient redissonClient;
 
+    @Resource
+    private CacheProperties cacheProperties;
+
     @Test
     void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
@@ -68,7 +71,7 @@ class TmallProductApplicationTests {
     }
 
     @Test
-    void testCategoryPath(){
+    void testCategoryPath() {
 
         Long[] catelogPath = categoryService.findCatelogPath(225L);
 
@@ -77,7 +80,7 @@ class TmallProductApplicationTests {
 
 
     @Test
-    void testSelectOne(){
+    void testSelectOne() {
 
         AttrGroupEntity catelog_id = attrGroupDao.selectOne(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", 225).last("LIMIT 1"));
 
@@ -119,6 +122,7 @@ class TmallProductApplicationTests {
         System.out.println(redissonClient);
         String hello = ops.get("hello");
         log.info(hello + "redis");
+        System.out.println(cacheProperties);
     }
 
     @Test
