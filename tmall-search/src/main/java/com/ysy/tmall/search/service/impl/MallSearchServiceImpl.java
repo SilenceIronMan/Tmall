@@ -251,16 +251,20 @@ public class MallSearchServiceImpl implements MallSearchService {
             if (s.length == 2) {
                 skuPriceRange.gte(s[0]).lte(s[1]);
             } else {
-                boolean startsWith = skuPrice.startsWith("_");
-                if (startsWith) {
-                    // 一般情况价格都是大于等于0的
-                    skuPriceRange.gte(0).lte(s[0]);
+
+                if (!"_".equals(skuPrice)) {
+                    boolean startsWith = skuPrice.startsWith("_");
+                    if (startsWith) {
+                        // 一般情况价格都是大于等于0的
+                        skuPriceRange.gte(0).lte(s[0]);
+                    }
+
+                    boolean endsWith = skuPrice.endsWith("_");
+                    if (endsWith) {
+                        skuPriceRange.gte(s[0]);
+                    }
                 }
 
-                boolean endsWith = skuPrice.endsWith("_");
-                if (endsWith) {
-                    skuPriceRange.gte(s[0]);
-                }
             }
 
 
