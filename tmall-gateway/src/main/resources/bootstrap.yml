@@ -51,6 +51,12 @@ spring:
         - id: tmall_host_route
           uri: lb://tmall-product
           predicates:
-            - Host=**.ysymall.com
+#            - Host=**.ysymall.com
+            - Host=ysymall.com
 
+
+        - id: tmall_search_route
+          uri: lb://tmall-search
+          predicates:
+              - Host=search.ysymall.com
 

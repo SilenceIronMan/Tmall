@@ -34,13 +34,18 @@ PUT /product
       },
       "brandName": {
         "type": "keyword",
-        "index": false,
-        "doc_values": false
+        "index": false
       },
       "brandImg": {
         "type": "keyword",
-        "index": false,
-        "doc_values": false
+        "index": false
+      },
+      "catalogId": {
+        "type": "long"
+      },
+      "catalogName": {
+        "type": "keyword",
+        "index": false
       },
       "attrs": {
         "type": "nested",
@@ -50,8 +55,7 @@ PUT /product
           },
           "attrName": {
             "type": "keyword",
-            "index": false,
-            "doc_values": false
+            "index": false
           },
           "attrValue": {
             "type": "keyword"
