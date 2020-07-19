@@ -52,7 +52,7 @@ spring:
           uri: lb://tmall-product
           predicates:
 #            - Host=**.ysymall.com
-            - Host=ysymall.com
+            - Host=ysymall.com, item.ysymall.com
 
 
         - id: tmall_search_route
