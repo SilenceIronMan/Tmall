@@ -8,9 +8,11 @@ import com.ysy.tmall.product.dao.AttrGroupDao;
 import com.ysy.tmall.product.entity.AttrGroupEntity;
 import com.ysy.tmall.product.entity.BrandEntity;
 import com.ysy.tmall.product.feign.CouponFeignService;
+import com.ysy.tmall.product.service.AttrGroupService;
 import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.service.BrandService;
 import com.ysy.tmall.product.service.CategoryService;
+import com.ysy.tmall.product.vo.web.SpuItemAttrGroupVo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RLock;
@@ -57,6 +59,8 @@ class TmallProductApplicationTests {
     @Resource
     private CacheProperties cacheProperties;
 
+    @Resource
+    AttrGroupService attrGroupService;
     @Test
     void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
@@ -138,5 +142,13 @@ class TmallProductApplicationTests {
 
             lock.unlock();
         }
+    }
+
+    @Test
+    void testAttrGroup() {
+        List<SpuItemAttrGroupVo> attrGroupWithAttrsBySpuId = attrGroupService.getAttrGroupWithAttrsBySpuId(4L, 225L);
+
+        log.info(attrGroupWithAttrsBySpuId.toString());
+
     }
 }

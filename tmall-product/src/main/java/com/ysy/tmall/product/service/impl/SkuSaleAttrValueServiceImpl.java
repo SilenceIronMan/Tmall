@@ -1,7 +1,9 @@
 package com.ysy.tmall.product.service.impl;
 
+import com.ysy.tmall.product.vo.web.SkuItemSaleAttrVo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,6 +28,13 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuItemSaleAttrVo> getSaleAttrsBySpuId(Long spuId) {
+
+        return this.baseMapper.getSaleAttrsBySpuId(spuId);
+
     }
 
 }

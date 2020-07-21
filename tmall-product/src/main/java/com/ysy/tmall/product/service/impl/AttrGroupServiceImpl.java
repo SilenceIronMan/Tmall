@@ -3,6 +3,7 @@ package com.ysy.tmall.product.service.impl;
 import com.ysy.tmall.product.entity.AttrEntity;
 import com.ysy.tmall.product.service.AttrService;
 import com.ysy.tmall.product.vo.AttrGroupWithAttrRespVo;
+import com.ysy.tmall.product.vo.web.SpuItemAttrGroupVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,13 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         }).collect(Collectors.toList());
 
         return attrGroupWithAttrRespVoList;
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+
+        List<SpuItemAttrGroupVo> attrGroupWithAttrsBySpuId  = this.baseMapper.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+        return attrGroupWithAttrsBySpuId;
     }
 
 }

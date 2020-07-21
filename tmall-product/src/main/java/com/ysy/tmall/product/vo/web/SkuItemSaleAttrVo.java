@@ -2,6 +2,8 @@ package com.ysy.tmall.product.vo.web;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @anthor silenceYin
  * @date 2020/7/20 - 6:40
@@ -10,5 +12,5 @@ import lombok.Data;
 public class SkuItemSaleAttrVo {
     private Long attrId;
     private String attrName;
-    private String attrValues;
+    private List<AttrValueWithSkuIdVo> attrValues;
 }

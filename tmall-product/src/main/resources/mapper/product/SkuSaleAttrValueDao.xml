@@ -14,4 +14,25 @@
             </resultMap>
 
 
+    <resultMap id="skuItemSaleAttrVo" type="com.ysy.tmall.product.vo.web.SkuItemSaleAttrVo">
+        <result property="attrId" column="attr_id"></result>
+        <result property="attrName" column="attr_name"></result>
+        <collection property="attrValues" ofType="com.ysy.tmall.product.vo.web.AttrValueWithSkuIdVo">
+            <result property="attrValue" column="attr_value"></result>
+            <result property="skuIds" column="sku_ids"></result>
+        </collection>
+    </resultMap>
+
+    <select id="getSaleAttrsBySpuId" resultMap="skuItemSaleAttrVo">
+        select b.attr_id,
+               b.attr_name ,
+               b.attr_value,
+               GROUP_CONCAT(DISTINCT a.sku_id) as sku_ids
+        from pms_sku_info as a
+        left join pms_sku_sale_attr_value as b on b.sku_id=a.sku_id
+        where a.spu_id=#{spuId}
+        GROUP BY b.attr_id,b.attr_name,b.attr_value
+    </select>
+
+
 </mapper>
