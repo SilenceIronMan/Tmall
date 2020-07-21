@@ -60,3 +60,7 @@ spring:
           predicates:
               - Host=search.ysymall.com
 
+        - id: tmall_auth_route
+          uri: lb://tmall-auth-server
+          predicates:
+            - Host=auth.ysymall.com

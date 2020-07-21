@@ -28,6 +28,7 @@
         <module>tmall-common</module>
         <module>tmall-gateway</module>
         <module>tmall-search</module>
+        <module>tmall-auth-server</module>
     </modules>
 
     <dependencies>

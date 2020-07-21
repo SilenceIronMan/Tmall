@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 129.211.93.117
+  application:
+    name: tmall-auth-server
+
+
+server:
+  port: 8015
+logging:
+  level:
+    com.ysy.tmall: debug
+
+

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tmall-auth-server
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117
+        namespace: 61916025-e951-4264-93b2-18a7885d2012
