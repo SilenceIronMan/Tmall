@@ -28,6 +28,7 @@
         <module>tmall-common</module>
         <module>tmall-gateway</module>
         <module>tmall-search</module>
+        <module>tmall-auth-server</module>
     </modules>
 
     <dependencies>
@@ -35,7 +36,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
-            <scope>true</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

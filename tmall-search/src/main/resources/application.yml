@@ -2,10 +2,11 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 129.211.93.117:1111
+        server-addr: 129.211.93.117
   application:
     name: tmall-search
-
+  thymeleaf:
+    cache: false
 
 
 server:

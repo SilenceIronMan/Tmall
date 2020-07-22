@@ -11,7 +11,34 @@
                     <result property="descript" column="descript"/>
                     <result property="icon" column="icon"/>
                     <result property="catelogId" column="catelog_id"/>
-            </resultMap>
+    </resultMap>
+
+
+    <resultMap type="com.ysy.tmall.product.vo.web.SpuItemAttrGroupVo" id="spuItemAttrGroupVoMap">
+        <result property="groupName" column="attr_group_name"/>
+        <collection property="attrs" ofType="com.ysy.tmall.product.vo.spu.Attr">
+        <result property="attrName" column="attr_name"/>
+        <result property="attrValue" column="attr_value"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAttrGroupWithAttrsBySpuId" resultMap="spuItemAttrGroupVoMap">
+        SELECT
+            spu_id,
+            attr_group_name ,
+            ppav.attr_id,
+            ppav.attr_name ,
+            ppav.attr_value
+        FROM
+            pms_attr_group pag
+        LEFT JOIN pms_attr_attrgroup_relation paar ON pag.attr_group_id = paar.attr_group_id
+        LEFT JOIN pms_product_attr_value ppav ON paar.attr_id = ppav.attr_id
+        WHERE
+            catelog_id = #{catalogId}
+        AND spu_id = #{spuId}
+
+
+    </select>
 
 
 </mapper>

@@ -4,7 +4,7 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 129.211.93.117:1111
+        server-addr: 129.211.93.117
         namespace: 321315a9-d1c5-469c-9a48-d2424e06287b
         extension-configs:
           - data-id: oss.yml
