@@ -7,7 +7,8 @@ spring:
     name: tmall-auth-server
   thymeleaf:
     cache: false
-
+  redis:
+    host: 129.211.93.117
 
 server:
   port: 8015
