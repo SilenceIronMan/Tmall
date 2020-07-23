@@ -1,12 +1,13 @@
-package com.ysy.tmall.thirdparty;
+package com.ysy.tmall.thirdparty.component;
 
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,62 +15,33 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
-@SpringBootTest
-class TmallThirdPartyApplicationTests {
+/**
+ * @anthor silenceYin
+ * @date 2020/7/22 - 22:48
+ */
+@ConfigurationProperties("spring.cloud.alicloud.sms")
+@Data
+@Component
+public class SmsComponent {
 
-    @Value("${spring.cloud.alicloud.oss.endpoint}")
-    private String endpoint;
-
-    @Value("${spring.cloud.alicloud.access-key}")
-    private String accessKeyId;
-
-    @Value("${spring.cloud.alicloud.secret-key}")
-    private String accessKeySecret;
-
-
-
-    @Test
-    void contextLoads() {
-
-
-    }
-
-
-    @Test
-    void testUploadAliOss() {
-        // Endpoint以杭州为例，其它Region请按实际情况填写。
-        //String endpoint = "https://oss-cn-hangzhou.aliyuncs.com";
-// 阿里云主账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM账号进行API访问或日常运维，请登录RAM控制台创建RAM账号。
-      //  String accessKeyId = "<yourAccessKeyId>";
-      //  String accessKeySecret = "<yourAccessKeySecret>";
-        String bucketName = "tmall-ysy";
-// <yourObjectName>上传文件到OSS时需要指定包含文件后缀在内的完整路径，例如abc/efg/123.jpg。
-        String objectName = "ysy/test/1.txt";
-
-// 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-
-// 上传文件到指定的存储空间（bucketName）并将其保存为指定的文件名称（objectName）。
-        String content = "Hello OSS";
-        ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(content.getBytes()));
-
-// 关闭OSSClient。
-        ossClient.shutdown();
-
-    }
+    private String host;
+    private String path;
+    private String appcode;
+    private String sign;
+    private String skin;
 
 
 
 
-    @Test
-    void testSendMessage() {
-        String host = "https://feginesms.market.alicloudapi.com";// 【1】请求地址 支持http 和 https 及 WEBSOCKET
-        String path = "/codeNotice";// 【2】后缀
-        String appcode = "ab"; // 【3】开通服务后 买家中心-查看AppCode
-        String sign = "1"; // 【4】请求参数，详见文档描述
-        String skin = "20"; // 【4】请求参数，详见文档描述
-        String param = "123456"; // 【4】请求参数，详见文档描述
-        String phone = "17826616857"; // 【4】请求参数，详见文档描述
+
+    public void sendMessage(String phone, String param) {
+//        String host = "https://feginesms.market.alicloudapi.com";// 【1】请求地址 支持http 和 https 及 WEBSOCKET
+//        String path = "/codeNotice";// 【2】后缀
+//        String appcode = "434"; // 【3】开通服务后 买家中心-查看AppCode
+//        String sign = "1"; // 【4】请求参数，详见文档描述
+//        String skin = "12"; // 【4】请求参数，详见文档描述
+//        String param = "4567"; // 【4】请求参数，详见文档描述
+//        String phone = "255648"; // 【4】请求参数，详见文档描述
         String urlSend = host + path + "?sign=" + sign + "&skin=" + skin+ "&param=" + param+ "&phone=" + phone; // 【5】拼接请求链接
         try {
             URL url = new URL(urlSend);
