@@ -55,8 +55,12 @@
 							</li>
 						</ul>
 						<ul class="header_ul_right">
-							<li style="border: 0;"><a href="../登录页面\index.html" class="aa">你好，请登录</a></li>
-							<li><a href="../注册页面\index.html" style="color: red;">免费注册</a> |</li>
+							<li>
+								<a  th:if="${session.loginUser!=null}">欢迎:[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
+								<a href="http://auth.ysymall.com/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
+								<a th:if="${session.loginUser==null}" href="http://auth.ysymall.com/reg.html" class="li_2">免费注册</a>
+							</li>
+
 							<li><a href="javascript:;" class="aa">我的订单</a> |</li>
 
 						</ul>
