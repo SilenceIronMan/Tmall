@@ -29,6 +29,7 @@
         <module>tmall-gateway</module>
         <module>tmall-search</module>
         <module>tmall-auth-server</module>
+        <module>tmall-cart</module>
     </modules>
 
     <dependencies>

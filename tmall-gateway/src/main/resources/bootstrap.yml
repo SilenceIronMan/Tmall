@@ -64,3 +64,8 @@ spring:
           uri: lb://tmall-auth-server
           predicates:
             - Host=auth.ysymall.com
+
+        - id: tmall_cart_route
+          uri: lb://tmall-cart
+          predicates:
+            - Host=cart.ysymall.com

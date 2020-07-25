@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tmall-cart
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117
+        namespace: 57dc453c-398d-4e6e-bc49-d0a8a894f096
