@@ -9,9 +9,18 @@ spring:
     cache: false
   redis:
     host: 129.211.93.117
+  session:
+    store-type: redis
+
+
 
 server:
   port: 8015
+  servlet:
+    session:
+      timeout: 30m
+
+
 logging:
   level:
     com.ysy.tmall: debug

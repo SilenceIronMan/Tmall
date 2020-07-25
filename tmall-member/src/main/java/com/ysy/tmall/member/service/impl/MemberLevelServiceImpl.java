@@ -26,4 +26,14 @@ public class MemberLevelServiceImpl extends ServiceImpl<MemberLevelDao, MemberLe
         return new PageUtils(page);
     }
 
+    /**
+     * 获取默认的会员等级
+     * @return
+     */
+    @Override
+    public MemberLevelEntity getDefaultLevel() {
+        return baseMapper.getDefaultLevel();
+    }
+
+
 }

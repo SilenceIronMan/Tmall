@@ -1,20 +1,28 @@
 package com.ysy.tmall.tmallauthserver.controller;
 
+import com.alibaba.fastjson.TypeReference;
 import com.ysy.tmall.common.exception.BizCodeEnum;
 import com.ysy.tmall.common.utils.R;
+import com.ysy.tmall.common.vo.MemberResponseVO;
 import com.ysy.tmall.tmallauthserver.constant.AuthServerConstant;
+import com.ysy.tmall.tmallauthserver.feign.MemberFeignService;
 import com.ysy.tmall.tmallauthserver.feign.ThirdPartFeignService;
 import com.ysy.tmall.tmallauthserver.vo.RegisterVo;
+import com.ysy.tmall.tmallauthserver.vo.UserLoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +45,11 @@ public class LoginController {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-
+    @Resource
+    private MemberFeignService memberFeignService;
     /**
      * 獲取短信驗證碼
+     *
      * @param phone 電話號碼
      * @return
      */
@@ -61,7 +71,7 @@ public class LoginController {
             }
         }
         // 防止前端页面刷新后,未过60s再次发送请求 (记录时间)
-        String code = UUID.randomUUID().toString().substring(0,6) +"_" + System.currentTimeMillis();
+        String code = UUID.randomUUID().toString().substring(0, 6) + "_" + System.currentTimeMillis();
 
         stringRedisTemplate.opsForValue().set(AuthServerConstant.CODE_SMS_CACHE_PREFIX + phone, code, 10, TimeUnit.MINUTES);
         log.info("验证码为-----------{}", code);
@@ -72,20 +82,78 @@ public class LoginController {
 
 
     @PostMapping("/register")
-    public String register(@Valid RegisterVo registerVo, BindingResult result, Model model) {
+    public String register(@Valid RegisterVo registerVo, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             List<FieldError> fieldErrors = result.getFieldErrors();
             Map<String, String> errorMap = fieldErrors.stream().collect(Collectors.toMap(e -> e.getField(), e -> e.getDefaultMessage(), (v1, v2) -> v2));
 
-            model.addAttribute("errors", errorMap);
+            redirectAttributes.addFlashAttribute("errors", errorMap);
             // 校驗出錯 轉發會注冊
-            return "reg";
+            return "redirect:http://auth.ysymall.com/reg.html";
         }
 
-
-        return "redirect:/login.html";
+        //1.校验验证码
+        String code = registerVo.getCode();
+        String phone = registerVo.getPhone();
+        String s = stringRedisTemplate.opsForValue().get(AuthServerConstant.CODE_SMS_CACHE_PREFIX + phone);
+        if (!StringUtils.isEmpty(s)) {
+            if (code.equals(s.split("_")[0])) {
+                //删除验证码
+                stringRedisTemplate.delete(AuthServerConstant.CODE_SMS_CACHE_PREFIX + phone);
+                //验证码通过  调用远程服务注册
+                R r = memberFeignService.regist(registerVo);
+                if (r.getCode() == 0) {
+                    //成功
+                    return "redirect:http://auth.ysymall.com/login.html";
+                } else {
+                    Map<String, String> errors = new HashMap<>();
+                    errors.put("msg",r.getData("msg",new TypeReference<String>(){}));
+                    return "redirect:http://auth.ysymall.com/reg.html";
+                }
+            } else {
+                Map<String, String> errors = new HashMap<>();
+                errors.put("code", "验证码错误");
+                redirectAttributes.addFlashAttribute("errors", errors);
+                return "redirect:http://auth.ysymall.com/reg.html";
+            }
+        } else {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("code", "验证码错误");
+            redirectAttributes.addFlashAttribute("errors", errors);
+            return "redirect:http://auth.ysymall.com/reg.html";
+        }
     }
 
+
+    @PostMapping("/login")
+    public String login(UserLoginVo vo, RedirectAttributes redirectAttributes, HttpSession session){
+
+        //远程登录
+        R r = memberFeignService.login(vo);
+        if(r.getCode()==0){
+            MemberResponseVO loginUser = r.getData(new TypeReference<MemberResponseVO>() {
+            });
+            session.setAttribute(AuthServerConstant.LOGIN_USER, loginUser);
+            return "redirect:http://ysymall.com";
+        }else {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("msg",r.getData("msg",new TypeReference<String>(){}));
+            redirectAttributes.addFlashAttribute("errors",errors);
+            return "redirect:redirect:http://auth.ysymall.com/login.html";
+        }
+    }
+
+
+    @GetMapping("/login.html")
+    public String loginPage(HttpSession session){
+        Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);
+        if(attribute==null){
+            //没登陆
+            return "login";
+        }else {
+            return "redirect:http://ysymall.com";
+        }
+    }
 
 
 }

@@ -12,4 +12,6 @@ public class AuthServerConstant {
     public static String CODE_SMS_CACHE_PREFIX = "sms:code:";
 
 
+    public static final String LOGIN_USER="loginUser";
+
 }

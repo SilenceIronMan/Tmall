@@ -4,13 +4,15 @@ import java.util.Arrays;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
+import com.ysy.tmall.common.exception.BizCodeEnum;
+import com.ysy.tmall.member.exception.PhoneExistExcetpion;
+import com.ysy.tmall.member.exception.UserNameExistExcetpion;
 import com.ysy.tmall.member.feign.CouponFeignService;
+import com.ysy.tmall.member.vo.MemberLoginVo;
+import com.ysy.tmall.member.vo.MemberRegistVo;
+import com.ysy.tmall.member.vo.SocialUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.member.entity.MemberEntity;
 import com.ysy.tmall.member.service.MemberService;
@@ -45,6 +47,49 @@ public class MemberController {
         R memberCoupons = couponFeignService.memberCoupons();
         return R.ok().put("member", memberEntity).put("coupons", memberCoupons.get("coupons"));
     }
+
+
+    @PostMapping("/regist")
+    public R regist(@RequestBody MemberRegistVo vo) {
+
+        try {
+            memberService.regist(vo);
+        } catch (PhoneExistExcetpion e) {
+            return R.error(BizCodeEnum.PHONE_EXIST_EXCEPTION.getCode(), BizCodeEnum.PHONE_EXIST_EXCEPTION.getMessage());
+        } catch (UserNameExistExcetpion e) {
+            return R.error(BizCodeEnum.USER_EXIST_EXCEPTION.getCode(), BizCodeEnum.USER_EXIST_EXCEPTION.getMessage());
+        }
+        return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo) {
+        MemberEntity entity = memberService.login(vo);
+        if (entity != null) {
+            return R.ok().setData(entity);
+        } else {
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(), BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMessage());
+        }
+    }
+
+    /**
+     * 社交登陆
+     *
+     * @param socialUser
+     * @return
+     */
+    @PostMapping("/oauth2/login")
+    public R oauthLogin(@RequestBody SocialUser socialUser) throws Exception {
+        MemberEntity entity = memberService.login(socialUser);
+        if (entity != null) {
+
+            return R.ok().setData(entity);
+        } else {
+            return R.error(BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(), BizCodeEnum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMessage());
+        }
+    }
+
+
 
     /**
      * 列表
