@@ -1,4 +1,4 @@
-package com.ysy.tmall.tmallauthserver.constant;
+package com.ysy.tmall.common.constant;
 
 /**
  *

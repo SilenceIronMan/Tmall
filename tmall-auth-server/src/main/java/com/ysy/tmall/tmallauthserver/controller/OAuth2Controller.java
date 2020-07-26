@@ -2,10 +2,10 @@ package com.ysy.tmall.tmallauthserver.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.ysy.tmall.common.constant.AuthServerConstant;
 import com.ysy.tmall.common.utils.HttpUtils;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.common.vo.MemberResponseVO;
-import com.ysy.tmall.tmallauthserver.constant.AuthServerConstant;
 import com.ysy.tmall.tmallauthserver.feign.MemberFeignService;
 import com.ysy.tmall.tmallauthserver.vo.SocialUser;
 import lombok.extern.slf4j.Slf4j;

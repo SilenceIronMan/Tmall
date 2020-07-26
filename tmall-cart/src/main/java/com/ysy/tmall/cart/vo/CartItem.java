@@ -1,4 +1,4 @@
-package vo;
+package com.ysy.tmall.cart.vo;
 
 import lombok.Data;
 

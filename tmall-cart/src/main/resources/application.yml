@@ -3,7 +3,12 @@ spring:
     nacos:
       discovery:
         server-addr: 129.211.93.117
-
+  redis:
+    host: 129.211.93.117 # 如果是 线上 购物车redis 和 缓存redis 不共用  目前 测试共用
+  session:
+    store-type: redis
+  thymeleaf:
+    cache: false
 server:
   port: 8016
 logging:
