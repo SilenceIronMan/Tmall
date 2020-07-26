@@ -34,4 +34,14 @@ public class CartController {
 
         return "cartList";
     }
+
+    /**
+     * 添加购物车成功页面
+     * @return
+     */
+    @GetMapping("/addToCart")
+    public String addToCart() {
+
+        return "success";
+    }
 }

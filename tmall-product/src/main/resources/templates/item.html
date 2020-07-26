@@ -58,6 +58,8 @@
 							<li>
 								<a  th:if="${session.loginUser!=null}">欢迎:[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
 								<a href="http://auth.ysymall.com/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
+							</li>
+							<li>
 								<a th:if="${session.loginUser==null}" href="http://auth.ysymall.com/reg.html" class="li_2">免费注册</a>
 							</li>
 
@@ -289,9 +291,9 @@
 								</form>
 							</div>
 							<div id="cartBtn"  style="cursor:pointer;"  canClick="1"  onclick="addToCart(this)" class="box-btns-two">
-
-								放入购物车
-
+								<a href="http://cart.ysymall.com/addToCart">
+								加入购物车
+								</a>
 							</div>
 						</div>
 

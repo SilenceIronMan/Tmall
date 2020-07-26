@@ -18,13 +18,18 @@
 					<ul class="header-left">
 						<li>
 
-							<a href="">首页</a>
+							<a href="http://ysymall.com">首页</a>
 						</li>
 
 					</ul>
 					<ul class="header-right">
-						<li><a href="../登录页面\index.html" style="color: red;">你好，请登录</a></li>
-						<li><a href="../注册页面\index.html">免费注册</a></li>
+						<li>
+							<a  th:if="${session.loginUser!=null}">欢迎:[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
+							<a href="http://auth.ysymall.com/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
+						</li>
+						<li>
+							<a th:if="${session.loginUser==null}" href="http://auth.ysymall.com/reg.html" class="li_2">免费注册</a>
+						</li>
 						<li class="spacer"></li>
 						<li><a href="">我的订单</a></li>
 						<li class="spacer"></li>
@@ -44,7 +49,7 @@
 			<div class="one_sousuo">
 				<div class="one_search_top">
 					<div class="one_top_left">
-						<a href="../" class="one_left_logo"><img src="img/logo1.jpg"></a>
+						<a href="http://ysymall.com" class="one_left_logo"><img src="img/logo1.jpg"></a>
 						<a href="#" class="one_left_link">购物车</a>
 					</div>
 					<div class="one_top_right">
