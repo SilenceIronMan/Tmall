@@ -15,4 +15,9 @@ logging:
   level:
     com.ysy.tmall: debug
 
-
+#线程池自定义配置
+ysymall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10

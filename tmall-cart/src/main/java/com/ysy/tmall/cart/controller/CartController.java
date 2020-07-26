@@ -1,10 +1,17 @@
 package com.ysy.tmall.cart.controller;
 
 import com.ysy.tmall.cart.interceptor.CartInterceptor;
+import com.ysy.tmall.cart.service.CartService;
 import com.ysy.tmall.cart.to.UserInfoTo;
+import com.ysy.tmall.cart.vo.CartItem;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.annotation.Resource;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @anthor silenceYin
@@ -13,6 +20,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @Slf4j
 public class CartController {
+
+    @Resource
+    private CartService cartService;
 
 
     /**
@@ -40,7 +50,13 @@ public class CartController {
      * @return
      */
     @GetMapping("/addToCart")
-    public String addToCart() {
+    public String addToCart(@Param("skuId") Long skuId,
+                            @Param("num") Integer num,
+                            Model model) throws ExecutionException, InterruptedException {
+
+        CartItem cartItem = cartService.addToCart(skuId, num);
+
+        model.addAttribute("item", cartItem);
 
         return "success";
     }
