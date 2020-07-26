@@ -5,7 +5,6 @@ import com.ysy.tmall.common.constant.AuthServerConstant;
 import com.ysy.tmall.common.constant.CartConstant;
 import com.ysy.tmall.common.vo.MemberResponseVO;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,6 +29,7 @@ public class CartInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         UserInfoTo userInfoTo = new UserInfoTo();
         HttpSession session = request.getSession();
+        // 判断session中是否有登陆用户
         MemberResponseVO member = (MemberResponseVO)session.getAttribute(AuthServerConstant.LOGIN_USER);
         if (Objects.nonNull(member)) {
             // 用户已登录
