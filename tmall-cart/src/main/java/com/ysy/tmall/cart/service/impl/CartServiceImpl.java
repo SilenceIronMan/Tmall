@@ -9,6 +9,7 @@ import com.ysy.tmall.cart.to.UserInfoTo;
 import com.ysy.tmall.cart.vo.CartItem;
 import com.ysy.tmall.cart.vo.SkuInfoVo;
 import com.ysy.tmall.common.utils.R;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -41,30 +42,57 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartItem addToCart(Long skuId, Integer num) throws ExecutionException, InterruptedException {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-        // 將商品添加到購物車
-        CartItem cartItem = new CartItem();
-        CompletableFuture<Void> skuInfoFuture = CompletableFuture.runAsync(() -> {
-            // 先遠程獲取sku的信息
-            R info = productFeignService.info(skuId);
-            SkuInfoVo skuInfo = info.getData("skuInfo", new TypeReference<SkuInfoVo>() {
-            });
+
+        String redisCartItem = (String) cartOps.get(skuId.toString());
+
+        if (StringUtils.isEmpty(redisCartItem)) {
+            // 將商品添加到購物車
+            CartItem cartItem = new CartItem();
+            CompletableFuture<Void> skuInfoFuture = CompletableFuture.runAsync(() -> {
+                // 先遠程獲取sku的信息
+                R info = productFeignService.info(skuId);
+                SkuInfoVo skuInfo = info.getData("skuInfo", new TypeReference<SkuInfoVo>() {
+                });
+                cartItem.setCount(num);
+                cartItem.setImage(skuInfo.getSkuDefaultImg());
+                cartItem.setPrice(skuInfo.getPrice());
+                cartItem.setSkuId(skuId);
+                cartItem.setTitle(skuInfo.getSkuTitle());
+
+            }, executor);
+
+            CompletableFuture<Void> skuSaleAttrsFuture = CompletableFuture.runAsync(() -> {
+                List<String> skuSaleAttrValues = productFeignService.getSkuSaleAttrValues(skuId);
+                cartItem.setSkuAttr(skuSaleAttrValues);
+            }, executor);
+
+            CompletableFuture.allOf(skuInfoFuture, skuSaleAttrsFuture).get();
+
+            cartOps.put(skuId.toString(), JSON.toJSONString(cartItem));
+
+            return cartItem;
+        }  else {
+            CartItem cartItem = JSON.parseObject(redisCartItem, CartItem.class);
+            Integer count = cartItem.getCount();
+            // 商品数量叠加
+            cartItem.setCount(count + num);
+            cartOps.put(skuId.toString(), JSON.toJSONString(cartItem));
+
+            // 显示的应该是你 实际添加的商品数量 而不是redis 中应该存储的数量
             cartItem.setCount(num);
-            cartItem.setImage(skuInfo.getSkuDefaultImg());
-            cartItem.setPrice(skuInfo.getPrice());
-            cartItem.setSkuId(skuId);
-            cartItem.setTitle(skuInfo.getSkuTitle());
+            return cartItem;
+        }
 
-        }, executor);
+    }
 
-        CompletableFuture<Void> skuSaleAttrsFuture = CompletableFuture.runAsync(() -> {
-            List<String> skuSaleAttrValues = productFeignService.getSkuSaleAttrValues(skuId);
-            cartItem.setSkuAttr(skuSaleAttrValues);
-        }, executor);
+    @Override
+    public CartItem getCartItem(Long skuId, Integer num) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        String cartItemRedis =(String) cartOps.get(skuId.toString());
 
-        CompletableFuture.allOf(skuInfoFuture, skuSaleAttrsFuture).get();
-
-        cartOps.put(skuId.toString(), JSON.toJSONString(cartItem));
-
+        CartItem cartItem = JSON.parseObject(cartItemRedis, CartItem.class);
+        // 显示的应该是实际添加的商品数量 而不是购物车总数
+        cartItem.setCount(num);
         return cartItem;
     }
 

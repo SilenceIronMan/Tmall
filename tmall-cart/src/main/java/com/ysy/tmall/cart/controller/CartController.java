@@ -46,7 +46,7 @@ public class CartController {
     }
 
     /**
-     * 添加购物车成功页面
+     * 添加购物车执行过程,重定向到成功页面
      * @return
      */
     @GetMapping("/addToCart")
@@ -54,10 +54,31 @@ public class CartController {
                             @Param("num") Integer num,
                             Model model) throws ExecutionException, InterruptedException {
 
-        CartItem cartItem = cartService.addToCart(skuId, num);
+        //CartItem cartItem = cartService.addToCart(skuId, num);
+        //model.addAttribute("item", cartItem);
+        // 采用重定向 防止接口重刷 多次添加购物车
+        cartService.addToCart(skuId, num);
+        return "redirect:http://cart.ysymall.com/addToCart.html?skuId="+skuId +"&num=" + num;
+    }
 
+
+    /**
+     * 添加购物车成功页面
+     * @return
+     */
+    @GetMapping("/addToCart.html")
+    public String addToCartSuccessPage(@Param("skuId") Long skuId,
+                            @Param("num") Integer num,
+                            Model model) {
+
+        //CartItem cartItem = cartService.addToCart(skuId, num);
+        //model.addAttribute("item", cartItem);
+        // 采用重定向 防止接口重刷 多次添加购物车
+        CartItem cartItem = cartService.getCartItem(skuId, num);
         model.addAttribute("item", cartItem);
-
         return "success";
     }
+
+
+
 }
