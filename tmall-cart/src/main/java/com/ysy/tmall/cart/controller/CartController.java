@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
@@ -51,13 +52,18 @@ public class CartController {
      */
     @GetMapping("/addToCart")
     public String addToCart(@Param("skuId") Long skuId,
-                            @Param("num") Integer num) throws ExecutionException, InterruptedException {
+                            @Param("num") Integer num,
+                            RedirectAttributes ra) throws ExecutionException, InterruptedException {
 
         //CartItem cartItem = cartService.addToCart(skuId, num);
         //model.addAttribute("item", cartItem);
         // 采用重定向 防止接口重刷 多次添加购物车
         cartService.addToCart(skuId, num);
-        return "redirect:http://cart.ysymall.com/addToCart.html?skuId="+skuId +"&num=" + num;
+        // 給轉發的url添加request參數。（這個以前還真不知道妙極了！！！）
+        ra.addAttribute("skuId", skuId);
+        ra.addAttribute("num", num);
+//        return "redirect:http://cart.ysymall.com/addToCart.html?skuId="+skuId +"&num=" + num;
+        return "redirect:http://cart.ysymall.com/addToCart.html";
     }
 
 
@@ -68,7 +74,7 @@ public class CartController {
     @GetMapping("/addToCart.html")
     public String addToCartSuccessPage(@Param("skuId") Long skuId,
                             @Param("num") Integer num,
-                            Model model) {
+                            Model model) throws ExecutionException, InterruptedException {
 
         //CartItem cartItem = cartService.addToCart(skuId, num);
         //model.addAttribute("item", cartItem);

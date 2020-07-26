@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -53,11 +54,13 @@ public class CartServiceImpl implements CartService {
                 R info = productFeignService.info(skuId);
                 SkuInfoVo skuInfo = info.getData("skuInfo", new TypeReference<SkuInfoVo>() {
                 });
-                cartItem.setCount(num);
-                cartItem.setImage(skuInfo.getSkuDefaultImg());
-                cartItem.setPrice(skuInfo.getPrice());
-                cartItem.setSkuId(skuId);
-                cartItem.setTitle(skuInfo.getSkuTitle());
+                if (Objects.nonNull(skuInfo)) {
+                    cartItem.setSkuId(skuId);
+                    cartItem.setCount(num);
+                    cartItem.setImage(skuInfo.getSkuDefaultImg());
+                    cartItem.setPrice(skuInfo.getPrice());
+                    cartItem.setTitle(skuInfo.getSkuTitle());
+                }
 
             }, executor);
 
@@ -86,14 +89,44 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartItem getCartItem(Long skuId, Integer num) {
+    public CartItem getCartItem(Long skuId, Integer num) throws ExecutionException, InterruptedException {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         String cartItemRedis =(String) cartOps.get(skuId.toString());
 
-        CartItem cartItem = JSON.parseObject(cartItemRedis, CartItem.class);
-        // 显示的应该是实际添加的商品数量 而不是购物车总数
-        cartItem.setCount(num);
-        return cartItem;
+        if (StringUtils.isNotEmpty(cartItemRedis)) {
+            CartItem cartItem = JSON.parseObject(cartItemRedis, CartItem.class);
+            // 显示的应该是实际添加的商品数量 而不是购物车总数
+            cartItem.setCount(num);
+            return cartItem;
+        } else {
+            // 概率极低吧 刚添加完 人就没了
+            // 某人改了url 的skuId 得预防一下
+            CartItem cartItem = new CartItem();
+            CompletableFuture<Void> skuInfoFuture = CompletableFuture.runAsync(() -> {
+                // 先遠程獲取sku的信息
+                R info = productFeignService.info(skuId);
+                SkuInfoVo skuInfo = info.getData("skuInfo", new TypeReference<SkuInfoVo>() {
+                });
+                if (Objects.nonNull(skuInfo)) {
+                    cartItem.setCount(num);
+                    cartItem.setImage(skuInfo.getSkuDefaultImg());
+                    cartItem.setPrice(skuInfo.getPrice());
+                    cartItem.setSkuId(skuId);
+                    cartItem.setTitle(skuInfo.getSkuTitle());
+                }
+            }, executor);
+
+            CompletableFuture<Void> skuSaleAttrsFuture = CompletableFuture.runAsync(() -> {
+                List<String> skuSaleAttrValues = productFeignService.getSkuSaleAttrValues(skuId);
+                cartItem.setSkuAttr(skuSaleAttrValues);
+            }, executor);
+
+            CompletableFuture.allOf(skuInfoFuture, skuSaleAttrsFuture).get();
+
+            return cartItem;
+
+        }
+
     }
 
     /**
