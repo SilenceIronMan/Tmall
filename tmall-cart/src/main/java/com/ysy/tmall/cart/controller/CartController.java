@@ -51,8 +51,7 @@ public class CartController {
      */
     @GetMapping("/addToCart")
     public String addToCart(@Param("skuId") Long skuId,
-                            @Param("num") Integer num,
-                            Model model) throws ExecutionException, InterruptedException {
+                            @Param("num") Integer num) throws ExecutionException, InterruptedException {
 
         //CartItem cartItem = cartService.addToCart(skuId, num);
         //model.addAttribute("item", cartItem);
