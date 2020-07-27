@@ -22,4 +22,10 @@ public interface CartService {
      * @param cartKey 购物车key
      */
     void clearCart(String cartKey);
+
+    void checkItem(Long skuId, Integer check);
+
+    void changeItemCount(Long skuId, Integer num);
+
+    void deleteItem(Long skuId);
 }

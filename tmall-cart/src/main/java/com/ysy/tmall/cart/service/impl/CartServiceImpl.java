@@ -180,6 +180,34 @@ public class CartServiceImpl implements CartService {
         redisTemplate.delete(cartKey);
     }
 
+    @Override
+    public void checkItem(Long skuId, Integer check) {
+        // 获取当前购物车
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+
+        String cartItemStr =(String) cartOps.get(skuId.toString());
+        CartItem cartItem = JSON.parseObject(cartItemStr, CartItem.class);
+        cartItem.setCheck(check == 1);
+        cartOps.put(skuId.toString(), JSON.toJSONString(cartItem));
+    }
+
+    @Override
+    public void changeItemCount(Long skuId, Integer num) {
+        // 获取当前购物车
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        String cartItemStr =(String) cartOps.get(skuId.toString());
+        CartItem cartItem = JSON.parseObject(cartItemStr, CartItem.class);
+        cartItem.setCount(num);
+        cartOps.put(skuId.toString(), JSON.toJSONString(cartItem));
+    }
+
+    @Override
+    public void deleteItem(Long skuId) {
+        // 获取当前购物车
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        cartOps.delete(skuId.toString());
+    }
+
     private List<CartItem> getCartItems(String cartKey){
         BoundHashOperations<String, Object, Object> hashOps = redisTemplate.boundHashOps(cartKey);
         List<Object> values = hashOps.values();

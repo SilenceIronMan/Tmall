@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -83,6 +84,43 @@ public class CartController {
         return "success";
     }
 
+
+
+    /**
+     * 购物车勾选商品
+     * @param skuId
+     * @param check
+     * @return
+     */
+    @GetMapping("/checkItem")
+    public String checkItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("check")Integer check){
+
+        cartService.checkItem(skuId,check);
+
+        //重定向到购物车列表页    刷新
+        return "redirect:http://cart.ysymall.com/cart.html";
+    }
+
+    /**
+     * 改变商品数量
+     * @return
+     */
+    @GetMapping("/countItem")
+    public String countItem(@RequestParam("skuId") Long skuId,
+                            @RequestParam("num")Integer num){
+        cartService.changeItemCount(skuId,num);
+        return "redirect:http://cart.ysymall.com/cart.html";
+    }
+
+    /**
+     * 删除购物项
+     */
+    @GetMapping("/deleteItem")
+    public String deleteItem(@RequestParam("skuId") Long skuId){
+        cartService.deleteItem(skuId);
+        return "redirect:http://cart.ysymall.com/cart.html";
+    }
 
 
 }

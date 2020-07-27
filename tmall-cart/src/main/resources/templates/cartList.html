@@ -173,7 +173,7 @@
 				</dl>
 			</div>
 			<div>
-				<button type="button">删除</button>
+				<button type="button"  onclick="deleteItem()">删除</button>
 
 			</div>
 		</div>
@@ -222,16 +222,16 @@
 	<script src="./js/index.js" charset="utf-8"></script>
 	<script type="text/javascript">
 		function toTrade() {
-			window.location.href = "http://cart.gmall.com:8087/toTrade";
+			window.location.href = "http://cart.ysymall.com:8087/toTrade";
 		}
 
 		function toItem(skuId) {
-			window.location.href = "http://item.gmall.com:8084/" + skuId + ".html";
+			window.location.href = "http://item.ysymall.com:8084/" + skuId + ".html";
 		}
 
 		function login() {
-			var s = encodeURIComponent("http://cart.gmall.com:8087/cartList");
-			window.location.href = "http://passport.atguigu.com/index?originUrl=" + s;
+			var s = encodeURIComponent("http://cart.ysymall.com/cartList");
+			window.location.href = "http://auth.ysymall.com/login.html?originUrl=" + s;
 		}
 
 		function checkSku(chkbox) {
@@ -773,6 +773,33 @@
 			$(this).children("p").children("img").attr("src", "img/one_mian_gwc2.png")
 		}).mouseout(function() {
 			$(this).children("p").children("img").attr("src", "img/one_mian_gwc1.png")
+		})
+
+
+		//改变商品项选中状态
+		$(".itemCheck").click(function () {
+			var skuId= $(this).attr("skuId");
+			var check=$(this).prop("checked");
+			location.href="http://cart.ysymall.com/checkItem?skuId="+skuId+"&check="+(check?1:0);
+
+		});
+
+		//修改商品项数量
+		$(".countOpsBtn").click(function () {
+			var skuId= $(this).parent().attr("skuId");
+			var num= $(this).parent().find(".countOpsNum").text();
+			location.href="http://cart.ysymall.com/countItem?skuId="+skuId+"&num="+num;
+		});
+
+		var deleteSkuId=0;
+
+		//删除购物项
+		function deleteItem() {
+			location.href="http://cart.ysymall.com/deleteItem?skuId="+deleteSkuId;
+		}
+
+		$(".deleteItemBtn").click(function () {
+			deleteSkuId=$(this).attr("skuId");
 		})
 	</script>
 </html>
