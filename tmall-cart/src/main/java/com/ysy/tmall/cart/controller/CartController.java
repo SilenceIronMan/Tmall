@@ -3,6 +3,7 @@ package com.ysy.tmall.cart.controller;
 import com.ysy.tmall.cart.interceptor.CartInterceptor;
 import com.ysy.tmall.cart.service.CartService;
 import com.ysy.tmall.cart.to.UserInfoTo;
+import com.ysy.tmall.cart.vo.Cart;
 import com.ysy.tmall.cart.vo.CartItem;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
@@ -37,12 +38,10 @@ public class CartController {
      * @return
      */
     @GetMapping("/cart.html")
-    public String cartListPage() {
+    public String cartListPage(Model model) throws ExecutionException, InterruptedException {
 
-        // 1 得到用户信息 用户id + 临时用户 id
-        UserInfoTo userInfoTo = CartInterceptor.userInfoToThreadLocal.get();
-        log.info(userInfoTo.toString());
-
+        Cart cart = cartService.getCart();
+        model.addAttribute("cart",cart);
         return "cartList";
     }
 
