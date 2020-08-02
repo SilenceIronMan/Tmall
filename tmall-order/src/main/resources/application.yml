@@ -10,7 +10,23 @@ spring:
         server-addr: 129.211.93.117
   application:
     name: tmall-order
-
+  rabbitmq:
+    host: 192.168.2.110
+    port: 5672
+    virtual-host: /
+    #开启发送端确认
+    publisher-confirm-type: correlated
+    #开启发送端抵达队列确认
+    publisher-returns: true
+    #只要抵达队列，以异步方式优先回调returnconfirm
+    template:
+      mandatory: true
+    #手动确认消息处理
+    listener:
+      simple:
+        acknowledge-mode: manual
+  thymeleaf:
+    cache: false
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -27,4 +43,10 @@ logging:
   level:
     com.ysy.tmall: debug
 
+#线程池自定义配置
+ysymall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
 
