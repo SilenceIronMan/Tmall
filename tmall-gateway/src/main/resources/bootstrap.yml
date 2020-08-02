@@ -69,3 +69,8 @@ spring:
           uri: lb://tmall-cart
           predicates:
             - Host=cart.ysymall.com
+
+        - id: tmall_order_route
+          uri: lb://tmall-order
+          predicates:
+            - Host=order.ysymall.com
