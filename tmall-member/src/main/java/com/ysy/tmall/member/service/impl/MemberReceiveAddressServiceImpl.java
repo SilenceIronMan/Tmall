@@ -1,6 +1,8 @@
 package com.ysy.tmall.member.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,10 +22,16 @@ public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAd
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberReceiveAddressEntity> page = this.page(
                 new Query<MemberReceiveAddressEntity>().getPage(params),
-                new QueryWrapper<MemberReceiveAddressEntity>()
+                new QueryWrapper<>()
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<MemberReceiveAddressEntity> listAddress(Long memberId) {
+        List<MemberReceiveAddressEntity> addressEntities = this.list(new QueryWrapper<MemberReceiveAddressEntity>().eq("member_id", memberId));
+        return addressEntities;
     }
 
 }

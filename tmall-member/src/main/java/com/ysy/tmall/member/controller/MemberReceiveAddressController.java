@@ -1,15 +1,12 @@
 package com.ysy.tmall.member.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.member.entity.MemberReceiveAddressEntity;
 import com.ysy.tmall.member.service.MemberReceiveAddressService;
@@ -30,6 +27,17 @@ import com.ysy.tmall.common.utils.R;
 public class MemberReceiveAddressController {
     @Autowired
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    /**
+     * 根据会员id获取该会员所有收货地址
+     * @param memberId
+     * @return
+     */
+    @GetMapping("/{memberId}/addresses")
+    public List<MemberReceiveAddressEntity> listAddress(@PathVariable("memberId") Long memberId) {
+        List<MemberReceiveAddressEntity> addresses = memberReceiveAddressService.listAddress(memberId);
+        return addresses;
+    }
 
     /**
      * 列表

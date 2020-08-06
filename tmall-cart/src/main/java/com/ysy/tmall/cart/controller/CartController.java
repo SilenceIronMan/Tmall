@@ -1,8 +1,6 @@
 package com.ysy.tmall.cart.controller;
 
-import com.ysy.tmall.cart.interceptor.CartInterceptor;
 import com.ysy.tmall.cart.service.CartService;
-import com.ysy.tmall.cart.to.UserInfoTo;
 import com.ysy.tmall.cart.vo.Cart;
 import com.ysy.tmall.cart.vo.CartItem;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -26,6 +26,19 @@ public class CartController {
 
     @Resource
     private CartService cartService;
+
+
+    /**
+     * 獲取當前登錄用戶購物車信息
+     * @return
+     */
+    @GetMapping("/currentUserCartItems")
+    @ResponseBody
+    public List<CartItem> getCurrentUserCartItems() {
+
+        List<CartItem> cartItems = cartService.getUserCartItems();
+        return cartItems;
+    }
 
 
     /**

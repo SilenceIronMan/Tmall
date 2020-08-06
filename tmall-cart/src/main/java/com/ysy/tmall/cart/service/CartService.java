@@ -3,6 +3,7 @@ package com.ysy.tmall.cart.service;
 import com.ysy.tmall.cart.vo.Cart;
 import com.ysy.tmall.cart.vo.CartItem;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -28,4 +29,6 @@ public interface CartService {
     void changeItemCount(Long skuId, Integer num);
 
     void deleteItem(Long skuId);
+
+    List<CartItem> getUserCartItems();
 }
