@@ -7,10 +7,15 @@ import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
 import com.ysy.tmall.order.vo.MemberAddressVo;
 import com.ysy.tmall.order.vo.OrderConfirmVo;
 import com.ysy.tmall.order.vo.OrderItemVo;
+import io.netty.util.concurrent.CompleteFuture;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,6 +25,8 @@ import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.order.dao.OrderDao;
 import com.ysy.tmall.order.entity.OrderEntity;
 import com.ysy.tmall.order.service.OrderService;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.annotation.Resource;
 
@@ -33,6 +40,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Resource
     private CartFeignService cartFeignService;
 
+    @Resource
+    private ThreadPoolExecutor executor;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<OrderEntity> page = this.page(
@@ -44,23 +54,41 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    public OrderConfirmVo confirmOrder() {
+    public OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException {
         OrderConfirmVo orderConfirmVo = new OrderConfirmVo();
         // 这边肯定有值了不然拦截器都过不了
         MemberResponseVO memberResponseVO = LoginUserInterceptor.loginUser.get();
-        // 获取会员id
-        Long memberId = memberResponseVO.getId();
-        List<MemberAddressVo> memberAddressVos = memberFeignService.listAddress(memberId);
-        orderConfirmVo.setAddress(memberAddressVos);
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
-        // 获取购物车选中的信息
-        List<OrderItemVo> currentUserCartItems = cartFeignService.getCurrentUserCartItems();
-        orderConfirmVo.setItems(currentUserCartItems);
 
-        // 獲取積分信息
-        Integer integration = memberResponseVO.getIntegration();
-        orderConfirmVo.setIntegration(integration);
+        CompletableFuture<Void> memberFuture = CompletableFuture.runAsync(() -> {
+            // 异步情况下 线程不一致 导致获取不到request上下文 所以给当前线程设置 service方法线程下的 request上下文
+            RequestContextHolder.setRequestAttributes(requestAttributes);
 
+            // 获取会员id
+            Long memberId = memberResponseVO.getId();
+            List<MemberAddressVo> memberAddressVos = memberFeignService.listAddress(memberId);
+            orderConfirmVo.setAddress(memberAddressVos);
+        }, executor);
+
+
+        CompletableFuture<Void> cartFuture = CompletableFuture.runAsync(() -> {
+            // 异步情况下 线程不一致 导致获取不到request上下文 所以给当前线程设置 service方法线程下的 request上下文
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+
+            // 获取购物车选中的信息
+            List<OrderItemVo> currentUserCartItems = cartFeignService.getCurrentUserCartItems();
+            orderConfirmVo.setItems(currentUserCartItems);
+        }, executor);
+
+
+        CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {
+            // 獲取積分信息
+            Integer integration = memberResponseVO.getIntegration();
+            orderConfirmVo.setIntegration(integration);
+        }, executor);
+
+        CompletableFuture.allOf(memberFuture, cartFuture, integrationFuture).get();
 
         return orderConfirmVo;
     }
