@@ -351,8 +351,8 @@
 			</div>
 
 			<!--地址-->
-			<div class="top-3">
-				<p>家里</p><span>齐天大圣  北京市  昌平区城区晨曦小区-16号楼 吉利大学  150****2245</span>
+			<div class="top-3 addr-item" th:each="addr:${orderConfirmData.address}">
+				<p th:attr="def=${addr.defaultStatus},addrId=${addr.id}">[[${addr.name}]]</p><span>[[${addr.name}]]  [[${addr.province}]] [[${addr.city}]] [[${addr.region}]]  [[${addr.detailAddress}]] [[${addr.phone}]]</span>
 			</div>
 			<p class="p2">更多地址︾</p>
 			<div class="hh1"/></div>
@@ -363,13 +363,6 @@
 			<p>省运费·无续重·随时取</p>
 			<p class="xiang">详情</p>
 		</div>
-
-		<!--地址-->
-		<div class="top-5">
-			<p>北京昌平区</p><span>北京市  昌平区城区晨曦小区-16号楼 吉利大学  齐天大圣 150****2245</span><img src="img/09.png" /><span>距收货人0米</span>
-			<p class="p3">距离最近</p><span class="xiu">修改自提点</span>
-		</div>
-		<div class="hh1" /></div>
 
 		<!--支付方式-->
 		<h4 class="h4">支付方式</h4>
@@ -418,11 +411,11 @@
 				<h5>商家：谷粒商城自营</h5>
 				<div><button>换购</button><span>已购满20.00元，再加49.90元，可返回购物车领取赠品</span></div>
 				<!--图片-->
-				<div class="yun1">
-					<img src="img/im_03.png" class="yun"/>
+				<div class="yun1" th:each="item:${orderConfirmData.items}">
+					<img th:src="${item.image}" class="yun"/>
 					<div class="mi">
-						<p>小米（MI）小米手环2 智能运动 心率检测 来 <span style="color: red;"> ￥ 149.00</span> <span> x1 </span> <span>有货</span></p>
-						<p>电提醒 久坐提醒 LED显示器 时间显示 防水记 <span>0.095kg</span></p>
+						<p>[[${item.title}]] <span style="color: red;"> ￥ [[${#numbers.formatDecimal(item.price,1,2)}]] </span> <span> x[[${item.count}]] </span> <span>[[${orderConfirmData.stocks[item.skuId]?"有货":"无货"}]]</span></p>
+						<p><span>0.095kg</span></p>
 						<p class="tui-1"><img src="img/i_07.png" />支持7天无理由退货</p>
 					</div>
 				</div>
@@ -460,9 +453,9 @@
 		<div class="xia">
 			<div class="qian">
 				<p class="qian_y">
-					<span>1</span>
+					<span>[[${orderConfirmData.count}]]</span>
 					<span>件商品，总商品金额：</span>
-					<span class="rmb">￥28.90</span>
+					<span class="rmb">￥[[${#numbers.formatDecimal(orderConfirmData.total,1,2)}]]</span>
 				</p>
 				<p class="qian_y">
 					<span>返现：</span>
@@ -470,7 +463,7 @@
 				</p>
 				<p class="qian_y">
 					<span>运费： </span>
-					<span class="rmb"> &nbsp ￥0.00</span>
+					<span class="rmb" > &nbsp ￥<b id="fareEle"></b></span>
 				</p>
 				<p class="qian_y">
 					<span>服务费： </span>
@@ -484,8 +477,9 @@
 			</div>
 
 			<div class="yfze">
-				<p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥28.90</span></p>
-				<p class="yfze_b">寄送至： 北京 朝阳区 三环到四环之间 朝阳北路复兴国际大厦23层麦田房产 IT-中心研发二部 收货人：赵存权 188****5052</p>
+				<p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥<b id="payPriceEle">[[${#numbers.formatDecimal(orderConfirmData.payPrice,1,2)}]]</b></span>
+				</p>
+				<p class="yfze_b">寄送至：<span id="receiveAddressEle"></span> 收货人：<span id="receiverEle"></span></p>
 			</div>
 			<button class="tijiao">提交订单</button>
 		</div>
@@ -720,8 +714,49 @@
                 },function(){
                     $('.h-r-1').css('display','none')
                 })
-            })
+				highligth();
+				var defAddrId = $(".addr-item p[def='1']").attr("addrId");
+				getFare(defAddrId);
+			})
 
+			//地址高亮
+			function highligth() {
+				$(".addr-item p").css({"border": "2px solid gray"})
+				$(".addr-item p[def='1']").css({"border": "2px solid red"})
+			}
+
+			//收货地址选择
+			$(".addr-item p").click(function () {
+				$(".addr-item p").attr("def", "0");
+				$(this).attr("def", "1");
+				highligth();
+
+				//获取当前地址id 查询运费
+				var addrId = $(this).attr("addrId");
+				//发送请求获取运费信息
+				getFare(addrId);
+
+			});
+
+			//获取运费
+			function getFare(addrId) {
+				//表单回填选择的地址
+				$("#addrIdInput").val(addrId);
+
+				$.get("http://ysymall.com/api/ware/wareinfo/fare?addrId=" + addrId, function (res) {
+					//设置运费
+					$("#fareEle").text(res.data.fare);
+					//设置应付总额
+					var total = [[${orderConfirmData.total}]];
+					var payPrice=total * 1 + res.data.fare * 1;
+					$("#payPriceEle").text(payPrice);
+					$("#payPriceInput").val(payPrice);
+					//设置收货地址
+					$("#receiveAddressEle").text(res.data.address.province + " " + res.data.address.detailAddress);
+					//设置收货人
+					$("#receiverEle").text(res.data.address.name);
+				});
+			}
 
 		</script>
 	</body>

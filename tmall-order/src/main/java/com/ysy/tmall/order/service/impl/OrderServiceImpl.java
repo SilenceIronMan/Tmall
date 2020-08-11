@@ -1,8 +1,12 @@
 package com.ysy.tmall.order.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.common.vo.MemberResponseVO;
 import com.ysy.tmall.order.feign.CartFeignService;
 import com.ysy.tmall.order.feign.MemberFeignService;
+import com.ysy.tmall.order.feign.WareFeignService;
 import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
 import com.ysy.tmall.order.vo.MemberAddressVo;
 import com.ysy.tmall.order.vo.OrderConfirmVo;
@@ -15,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,6 +44,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Resource
     private CartFeignService cartFeignService;
+
+    @Resource
+    private WareFeignService wareFeignService;
 
     @Resource
     private ThreadPoolExecutor executor;
@@ -72,14 +80,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }, executor);
 
 
-        CompletableFuture<Void> cartFuture = CompletableFuture.runAsync(() -> {
+        CompletableFuture<Void> cartFuture = CompletableFuture.supplyAsync(() -> {
             // 异步情况下 线程不一致 导致获取不到request上下文 所以给当前线程设置 service方法线程下的 request上下文
             RequestContextHolder.setRequestAttributes(requestAttributes);
 
             // 获取购物车选中的信息
             List<OrderItemVo> currentUserCartItems = cartFeignService.getCurrentUserCartItems();
             orderConfirmVo.setItems(currentUserCartItems);
-        }, executor);
+            return currentUserCartItems;
+        }, executor).thenAcceptAsync((items) -> {
+            // 所有的skuIdlist
+            List<Long> skuIds = items.stream().map(item -> item.getSkuId()).collect(Collectors.toList());
+            // 查询sku是否有货
+            R skuHasStock = wareFeignService.getSkuHasStock(skuIds);
+            List<SkuHasStockVo> stockData = skuHasStock.getData(new TypeReference<List<SkuHasStockVo>>() {
+            });
+            if (stockData != null) {
+                Map<Long, Boolean> stockMap = stockData.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock, (v1, v2) -> v1));
+                orderConfirmVo.setStocks(stockMap);
+            }
+
+        });
 
 
         CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {

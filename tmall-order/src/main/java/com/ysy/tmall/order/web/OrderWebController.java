@@ -26,7 +26,7 @@ public class OrderWebController {
         OrderConfirmVo confirmVo = orderService.confirmOrder();
 
         //展示订单确认的数据
-        model.addAttribute("data", confirmVo);
+        model.addAttribute("orderConfirmData", confirmVo);
         return "confirm";
     }
 }
