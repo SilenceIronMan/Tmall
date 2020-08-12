@@ -4,21 +4,26 @@ import com.alibaba.fastjson.TypeReference;
 import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.common.vo.MemberResponseVO;
+import com.ysy.tmall.order.constant.OrderConstant;
 import com.ysy.tmall.order.feign.CartFeignService;
 import com.ysy.tmall.order.feign.MemberFeignService;
 import com.ysy.tmall.order.feign.WareFeignService;
 import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
-import com.ysy.tmall.order.vo.MemberAddressVo;
-import com.ysy.tmall.order.vo.OrderConfirmVo;
-import com.ysy.tmall.order.vo.OrderItemVo;
+import com.ysy.tmall.order.vo.*;
 import io.netty.util.concurrent.CompleteFuture;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +35,7 @@ import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.order.dao.OrderDao;
 import com.ysy.tmall.order.entity.OrderEntity;
 import com.ysy.tmall.order.service.OrderService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -50,6 +56,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Resource
     private ThreadPoolExecutor executor;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -101,17 +110,53 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
 
         });
+        // 獲取積分信息
+        Integer integration = memberResponseVO.getIntegration();
+        orderConfirmVo.setIntegration(integration);
 
 
-        CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {
-            // 獲取積分信息
-            Integer integration = memberResponseVO.getIntegration();
-            orderConfirmVo.setIntegration(integration);
-        }, executor);
+        CompletableFuture.allOf(memberFuture, cartFuture).get();
 
-        CompletableFuture.allOf(memberFuture, cartFuture, integrationFuture).get();
+        String token = UUID.randomUUID().toString().replace("-", "");
+        orderConfirmVo.setOrderToken(token);
+        redisTemplate.opsForValue().set(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberResponseVO.getId(), token, 30, TimeUnit.MINUTES);
 
         return orderConfirmVo;
+    }
+
+    @Override
+    @Transactional
+    public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
+        SubmitOrderResponseVo response = new SubmitOrderResponseVo();
+
+
+        MemberResponseVO memberResponseVO = LoginUserInterceptor.loginUser.get();
+
+        String orderToken = vo.getOrderToken();
+        //1.验证令牌【令牌的对比和删除必须保证原子性】
+        //0令牌失败   1删除成功
+        String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+        //原子验证令牌和删除令牌
+        Long execute = redisTemplate
+                .execute(new DefaultRedisScript<>(script, Long.class),
+                        Arrays.asList(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberResponseVO.getId()),
+                        orderToken);
+//        String redisToken = redisTemplate.opsForValue().get(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberResponseVO.getId());
+//        if (orderToken != null && orderToken.equals(redisToken)) {
+//            // 通过验证
+//            redisTemplate.delete(OrderConstant.USER_ORDER_TOKEN_PREFIX + memberResponseVO.getId()));
+//        } else {
+//
+//        }
+
+        if (execute == 0L) {
+            //令牌验证失败
+            response.setCode(1);
+            return response;
+        } else {
+            // 创建订单 验证令牌 验证价格 锁库存
+        }
+        return null;
     }
 
 }

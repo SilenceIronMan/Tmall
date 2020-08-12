@@ -481,7 +481,12 @@
 				</p>
 				<p class="yfze_b">寄送至：<span id="receiveAddressEle"></span> 收货人：<span id="receiverEle"></span></p>
 			</div>
-			<button class="tijiao">提交订单</button>
+			<form action="http://order.ysymall.com/submitOrder" method="post">
+			<button class="tijiao" type="submit">提交订单</button>
+			<input type="hidden" name="orderToken" id="orderToken" th:value="${orderConfirmData.orderToken}">
+			<input type="hidden" name="addrId" id="addrIdInput">
+			<input type="hidden" name="payPrice" id="payPriceInput">
+			</form>
 		</div>
 		</div>
 
