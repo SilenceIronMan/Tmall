@@ -271,7 +271,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                         Long cat2Id = c2.getCatId();
                         //查找三級分類集合
                         List<CategoryEntity> category3List = getByParentCid(categoryEntityList, c2.getCatId());
-                        List<Catalog2Vo.Catalog3Vo> catalog3Vos = category3List.stream().map(c3 -> new Catalog2Vo.Catalog3Vo(cat2Id.toString(), c3.toString(), c3.getName())).collect(Collectors.toList());
+                        List<Catalog2Vo.Catalog3Vo> catalog3Vos = category3List.stream().map(c3 -> new Catalog2Vo.Catalog3Vo(cat2Id.toString(), c3.getCatId().toString(), c3.getName())).collect(Collectors.toList());
 
                         Catalog2Vo catalog2Vo = new Catalog2Vo(v.getCatId().toString(), catalog3Vos, c2.getCatId().toString(),
                                 c2.getName());

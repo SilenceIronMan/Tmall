@@ -9,6 +9,8 @@ import com.ysy.tmall.ware.dao.WareSkuDao;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
 import com.ysy.tmall.ware.service.WareSkuService;
 import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.ware.vo.LockStockResult;
+import com.ysy.tmall.ware.vo.WareSkuLockVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,6 +89,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             return skuHasStockVo;
         }).collect(Collectors.toList());
         return skuHasStockVos;
+    }
+
+    @Override
+    public List<LockStockResult> orderLockStock(WareSkuLockVo wareSkuLockVo) {
+        return null;
     }
 
 

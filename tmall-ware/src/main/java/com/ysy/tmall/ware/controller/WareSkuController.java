@@ -6,6 +6,8 @@ import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.ware.vo.LockStockResult;
+import com.ysy.tmall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,14 @@ public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
 
+
+
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo){
+        List<LockStockResult> results = wareSkuService.orderLockStock(wareSkuLockVo);
+
+        return R.ok().setData(results);
+    }
 
     @PostMapping("/hasstock")
     public R getSkuHasStock(@RequestBody List<Long> skuIds){

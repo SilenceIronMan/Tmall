@@ -16,7 +16,8 @@ spring:
     cache: false
   redis:
     host: 129.211.93.117
-
+  session:
+    store-type: redis
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml

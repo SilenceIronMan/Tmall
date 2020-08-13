@@ -1,6 +1,5 @@
 package com.ysy.tmall.product.feign;
 
-import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
 import com.ysy.tmall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +14,12 @@ import java.util.List;
 @FeignClient(value = "tmall-ware", path = "ware/waresku")
 public interface WareFeignService {
 
+    /**
+     * 库存判断
+     * @param skuIds
+     * @return
+     */
     @PostMapping("/hasstock")
     R getSkuHasStock(@RequestBody List<Long> skuIds);
+
 }
