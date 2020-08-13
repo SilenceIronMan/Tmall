@@ -1,9 +1,11 @@
 package com.ysy.tmall.order.feign;
 
 import com.ysy.tmall.common.utils.R;
+import com.ysy.tmall.order.vo.WareSkuLockVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -18,5 +20,16 @@ public interface WareFeignService {
 
     @PostMapping("/ware/waresku/hasstock")
     R getSkuHasStock(@RequestBody List<Long> skuIds);
+
+    @PostMapping("/ware/wareinfo/fare")
+    R getFare(@RequestParam("addrId") Long addrId);
+
+    /**
+     * 锁定库存
+     * @param wareSkuLockVo
+     * @return
+     */
+    @PostMapping("/ware/waresku/lock/order")
+    R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo);
 
 }

@@ -5,11 +5,7 @@ import java.util.Map;
 
 import com.ysy.tmall.product.vo.spu.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.product.entity.SpuInfoEntity;
 import com.ysy.tmall.product.service.SpuInfoService;
@@ -29,6 +25,19 @@ import com.ysy.tmall.common.utils.R;
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
+
+
+
+    /**
+     * 根据skuId获取spu信息
+     */
+    @GetMapping("/spuinfo/{skuId}")
+    public R getSpuInfoBySkuId(@PathVariable("skuId") Long skuId) {
+        SpuInfoEntity spuInfo = spuInfoService.getSpuInfoBySkuId(skuId);
+        //PageUtils page = spuInfoService.queryPage(params);
+
+        return R.ok().put("spuInfo", spuInfo);
+    }
 
 
     /**

@@ -1,4 +1,4 @@
-package com.ysy.tmall.order.vo;
+package com.ysy.tmall.ware.vo;
 
 import lombok.Data;
 

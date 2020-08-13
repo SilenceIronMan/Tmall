@@ -29,9 +29,20 @@ public class OrderSubmitVo {
     // TODO 优惠发票
 
     /**
+     * 订单备注
+     */
+    private String note;
+
+    /**
      * 应付总额 (验证价格 用户友好程度)
      */
     private BigDecimal payPrice;
+
+
+    /**
+     * 运费
+     */
+    private BigDecimal fare;
 
     // 用户相关信息 从session中取
 }
