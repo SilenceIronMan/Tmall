@@ -14,7 +14,7 @@ public class OrderSubmitVo {
     /**
      * 收货地址id
      */
-    private Long addId;
+    private Long addrId;
 
     /**
      * 支付方式

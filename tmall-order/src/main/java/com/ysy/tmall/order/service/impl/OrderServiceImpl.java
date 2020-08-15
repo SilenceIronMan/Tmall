@@ -143,7 +143,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
         orderSubmitVoThreadLocal.set(vo);
         SubmitOrderResponseVo response = new SubmitOrderResponseVo();
-
+        // 成功
+        response.setCode(0);
 
         MemberResponseVO memberResponseVO = LoginUserInterceptor.loginUser.get();
 
@@ -198,16 +199,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                     return orderItemVo;
                 }).collect(Collectors.toList());
                 wareSkuLockVo.setLocks(lockItems);
+
+                // 远程锁库存
                 R r = wareFeignService.orderLockStock(wareSkuLockVo);
                 if (r.getCode() == 0) {
 
-                    // 成功
-
+                    response.setOrder(order.getOrder());
+                    return response;
 
                 } else {
                     // 失败
 
-
+                    response.setCode(3);
+                    return response;
                 }
 
 
@@ -220,7 +224,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
 
         }
-        return null;
     }
 
     /**
@@ -387,7 +390,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         OrderSubmitVo orderSubmitVo = orderSubmitVoThreadLocal.get();
         // 2.生成远程地址对象
-        R fare = wareFeignService.getFare(orderSubmitVo.getAddId());
+        R fare = wareFeignService.getFare(orderSubmitVo.getAddrId());
         FareVo fareVo = fare.getData(new TypeReference<FareVo>() {
         });
         MemberAddressVo address = fareVo.getAddress();
