@@ -1,11 +1,11 @@
 package com.ysy.tmall.ware.controller;
 
 import com.ysy.tmall.common.exception.BizCodeEnum;
+import com.ysy.tmall.common.exception.NoStockException;
 import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
-import com.ysy.tmall.ware.exception.NoStockException;
 import com.ysy.tmall.ware.service.WareSkuService;
 import com.ysy.tmall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.ysy.tmall.ware.exception;
+package com.ysy.tmall.common.exception;
 
 /**
  * 无库存异常
