@@ -3,6 +3,7 @@ package com.ysy.tmall.ware.dao;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,4 +18,15 @@ import java.util.List;
 public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
 
     Long getSkuStock(Long skuId);
+
+    List<Long> listWareIdHasSkuStock(Long skuId);
+
+    /**
+     * 锁定商品库存
+     * @param skuId
+     * @param wareId
+     * @param num
+     * @return
+     */
+    Long lockSkuStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("num") Integer num);
 }

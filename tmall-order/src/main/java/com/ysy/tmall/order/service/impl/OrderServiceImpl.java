@@ -202,8 +202,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 if (r.getCode() == 0) {
 
                     // 成功
-                    LockStockResult lockStockResult = r.getData(new TypeReference<LockStockResult>() {
-                    });
+
+
                 } else {
                     // 失败
 
