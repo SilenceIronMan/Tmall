@@ -1,10 +1,16 @@
 spring:
   datasource:
+    # 当前数据源操作类型
+    type: com.alibaba.druid.pool.DruidDataSource
     username: root
     password: 123456
     url: jdbc:mysql://localhost:3306/tmall_oms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
+    alibaba:
+      seata:
+        # 自定义事务组名称需要与seata-server中的对应
+        tx-service-group: ysy_tx_group
     nacos:
       discovery:
         server-addr: 129.211.93.117
