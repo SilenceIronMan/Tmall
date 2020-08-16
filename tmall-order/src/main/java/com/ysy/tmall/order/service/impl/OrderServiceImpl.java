@@ -16,6 +16,7 @@ import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
 import com.ysy.tmall.order.service.OrderItemService;
 import com.ysy.tmall.order.vo.*;
 import io.netty.util.concurrent.CompleteFuture;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -139,6 +140,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
+    // @GlobalTransactional SEATA AT模式 不适合高并发
     @Transactional
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
         orderSubmitVoThreadLocal.set(vo);
@@ -202,6 +204,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
                 // 远程锁库存
                 R r = wareFeignService.orderLockStock(wareSkuLockVo);
+                // 库存成功了, 网络原因超时 订单回滚 库存未回滚
+                // 为了保证高并发.库存 服务自己回滚. 可以发消息给库存
                 if (r.getCode() == 0) {
 
                     response.setOrder(order.getOrder());
