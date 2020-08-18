@@ -17,7 +17,7 @@ spring:
   application:
     name: tmall-order
   rabbitmq:
-    host: 192.168.2.110
+    host: 120.79.158.181
     port: 5672
     virtual-host: /
     #开启发送端确认

@@ -1,9 +1,7 @@
 package com.ysy.tmall.order.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,6 +17,11 @@ import java.util.Map;
 public class MyMQConfig {
     // @Bean Binding Queue Exchange
     //延时队列  死信队列
+
+//    @RabbitListener(queues = "order.release.order.queue")
+//    public void listener(Message message) {
+//        System.out.println(new String(message.getBody()));
+//    }
 
     /**
      * 容器中 Binding Queue Exchange  会自动在rabbitMq中创建(RabbitMq中不存在 该 Binding Queue Exchange 时)
@@ -54,14 +57,14 @@ public class MyMQConfig {
 
     //订单的binding
     @Bean
-    public Binding ordeCreateOrderBinding() {
+    public Binding orderCreateOrderBinding() {
         Binding binding = new Binding("order.delay.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.create.order", null);
         return binding;
     }
 
     //binding
     @Bean
-    public Binding ordeReleaseOrderBinding() {
+    public Binding orderReleaseOrderBinding() {
         Binding binding = new Binding("order.release.order.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.release.order", null);
         return binding;
     }
