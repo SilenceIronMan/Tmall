@@ -2,6 +2,7 @@ package com.ysy.tmall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.common.to.producttocoupon.mq.StockLockedTo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.ware.entity.WareSkuEntity;
 import com.ysy.tmall.ware.vo.WareSkuLockVo;
@@ -45,5 +46,7 @@ public interface WareSkuService extends IService<WareSkuEntity> {
     List<Long> listWareIdHasSkuStock(Long skuId);
 
     Long lockSkuStock(Long skuId, Long wareId, Integer num);
+
+    void unlockStock(StockLockedTo to);
 }
 

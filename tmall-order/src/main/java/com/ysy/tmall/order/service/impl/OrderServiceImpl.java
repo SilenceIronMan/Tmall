@@ -199,6 +199,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
                 // 远程锁库存
                 R r = wareFeignService.orderLockStock(wareSkuLockVo);
+
+                // TODO 测试订单异常状态
+                int i = 10/0;
+
                 // 库存成功了, 网络原因超时 订单回滚 库存未回滚
                 // 为了保证高并发.库存 服务自己回滚. 可以发消息给库存
                 if (r.getCode() == 0) {
@@ -223,6 +227,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
 
         }
+    }
+
+    @Override
+    public OrderEntity getOrderStatus(String orderSn) {
+        OrderEntity order = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return order;
     }
 
     /**
