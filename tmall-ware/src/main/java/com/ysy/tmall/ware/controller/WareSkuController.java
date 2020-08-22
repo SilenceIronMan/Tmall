@@ -2,7 +2,7 @@ package com.ysy.tmall.ware.controller;
 
 import com.ysy.tmall.common.exception.BizCodeEnum;
 import com.ysy.tmall.common.exception.NoStockException;
-import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.common.to.SkuHasStockVo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.ware.entity.WareSkuEntity;

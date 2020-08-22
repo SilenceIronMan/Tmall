@@ -1,6 +1,6 @@
 package com.ysy.tmall.search.service;
 
-import com.ysy.tmall.common.to.producttocoupon.to.SkuEsModel;
+import com.ysy.tmall.common.to.to.SkuEsModel;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.ysy.tmall.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.ysy.tmall.common.to.producttocoupon.to.SkuEsModel;
+import com.ysy.tmall.common.to.to.SkuEsModel;
 import com.ysy.tmall.search.config.ElasticSearchConfig;
 import com.ysy.tmall.search.constant.EsConstant;
 import com.ysy.tmall.search.service.MallSearchService;

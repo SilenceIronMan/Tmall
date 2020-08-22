@@ -1,17 +1,14 @@
 package com.ysy.tmall.product.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.base.Function;
-import com.ysy.tmall.common.constant.AttrConstant;
 import com.ysy.tmall.common.constant.ProductConstant;
-import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
-import com.ysy.tmall.common.to.producttocoupon.SkuReductionTO;
-import com.ysy.tmall.common.to.producttocoupon.SpuBoundsTO;
-import com.ysy.tmall.common.to.producttocoupon.to.SkuEsModel;
+import com.ysy.tmall.common.to.SkuHasStockVo;
+import com.ysy.tmall.common.to.SkuReductionTO;
+import com.ysy.tmall.common.to.SpuBoundsTO;
+import com.ysy.tmall.common.to.to.SkuEsModel;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.common.utils.R;
@@ -24,16 +21,13 @@ import com.ysy.tmall.product.service.*;
 import com.ysy.tmall.product.vo.spu.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Service("spuInfoService")

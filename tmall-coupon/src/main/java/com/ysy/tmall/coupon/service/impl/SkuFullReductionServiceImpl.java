@@ -1,7 +1,7 @@
 package com.ysy.tmall.coupon.service.impl;
 
-import com.ysy.tmall.common.to.producttocoupon.MemberPrice;
-import com.ysy.tmall.common.to.producttocoupon.SkuReductionTO;
+import com.ysy.tmall.common.to.MemberPrice;
+import com.ysy.tmall.common.to.SkuReductionTO;
 import com.ysy.tmall.coupon.entity.MemberPriceEntity;
 import com.ysy.tmall.coupon.entity.SkuLadderEntity;
 import com.ysy.tmall.coupon.service.MemberPriceService;

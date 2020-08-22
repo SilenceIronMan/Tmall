@@ -3,7 +3,7 @@ package com.ysy.tmall.product;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ysy.tmall.common.to.producttocoupon.SpuBoundsTO;
+import com.ysy.tmall.common.to.SpuBoundsTO;
 import com.ysy.tmall.product.dao.AttrGroupDao;
 import com.ysy.tmall.product.entity.AttrGroupEntity;
 import com.ysy.tmall.product.entity.BrandEntity;

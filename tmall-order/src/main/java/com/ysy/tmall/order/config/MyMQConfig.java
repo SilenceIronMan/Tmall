@@ -69,4 +69,14 @@ public class MyMQConfig {
         return binding;
     }
 
+    /**
+     * 取消订单后同事通知库存释放队列
+     * @return
+     */
+    @Bean
+    public Binding orderReleaseOtherBinding() {
+        Binding binding = new Binding("order.release.stock.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.release.other.#", null);
+        return binding;
+    }
+
 }

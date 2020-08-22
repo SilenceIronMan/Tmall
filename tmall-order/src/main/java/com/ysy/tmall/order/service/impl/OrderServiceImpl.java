@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
+import com.ysy.tmall.common.to.SkuHasStockVo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.common.utils.R;
@@ -23,6 +23,7 @@ import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
 import com.ysy.tmall.order.service.OrderItemService;
 import com.ysy.tmall.order.service.OrderService;
 import com.ysy.tmall.order.vo.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -67,6 +68,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Resource
     private OrderItemService orderItemService;
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
 
 
 
@@ -201,13 +205,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 R r = wareFeignService.orderLockStock(wareSkuLockVo);
 
                 // TODO 测试订单异常状态
-                int i = 10/0;
+                // int i = 10/0;
 
                 // 库存成功了, 网络原因超时 订单回滚 库存未回滚
                 // 为了保证高并发.库存 服务自己回滚. 可以发消息给库存
                 if (r.getCode() == 0) {
+                    OrderEntity orderInfo = order.getOrder();
+                    response.setOrder(orderInfo);
 
-                    response.setOrder(order.getOrder());
+                    // 订单创建成功 发送消息
+                    rabbitTemplate.convertAndSend("order-event-exchange","order.create.order", orderInfo);
+
                     return response;
 
                 } else {
@@ -233,6 +241,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public OrderEntity getOrderStatus(String orderSn) {
         OrderEntity order = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
         return order;
+    }
+
+    @Override
+    public void closeOrder(OrderEntity entity) {
+        // 关单前先查询订单的状态
+        OrderEntity orderEntity = this.getById(entity.getId());
+
+        // 未付款订单可以关闭
+        if (orderEntity.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()) {
+            OrderEntity order = new OrderEntity();
+            order.setId(orderEntity.getId());
+            order.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(order);
+            /* 订单关闭成功 通知 库存解锁 (虽然库存解锁队列的时间正常情况一定在订单关闭之后)
+             但是有可能由于网络等原因导致了库存解锁队列的消息先被获取了
+             所以这边有必要 再去提醒一遍 双重保险
+            */
+            rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", "");
+
+        }
+
     }
 
     /**

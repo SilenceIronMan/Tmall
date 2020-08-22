@@ -1,4 +1,4 @@
-package com.ysy.tmall.common.to.producttocoupon;
+package com.ysy.tmall.common.to;
 
 import lombok.Data;
 

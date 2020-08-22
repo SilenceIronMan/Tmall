@@ -1,7 +1,8 @@
 package com.ysy.tmall.ware.listener;
 
 import com.rabbitmq.client.Channel;
-import com.ysy.tmall.common.to.producttocoupon.mq.StockLockedTo;
+import com.ysy.tmall.common.to.mq.OrderTo;
+import com.ysy.tmall.common.to.mq.StockLockedTo;
 import com.ysy.tmall.ware.service.WareSkuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -41,6 +42,27 @@ public class StockReleaseListener {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
         } catch (Exception e) {
             //消息拒绝以后重新放到队列中，让别人继续消费解锁
+            log.info("库存解锁消息处理失败", e);
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(),true);
+        }
+    }
+
+    /**
+     * 监听关闭订单传来的消息
+     * @param message
+     * @param channel
+     * @param orderTo
+     * @throws IOException
+     */
+    @RabbitHandler
+    public void handleOrderCloseRelease(Message message, Channel channel, OrderTo orderTo) throws IOException {
+        log.info("订单关闭，准备解锁库存....");
+        try {
+            wareSkuService.unlockStock(orderTo);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (Exception e) {
+
+            log.info("订单关闭, 库存解锁消息处理失败", e);
             channel.basicReject(message.getMessageProperties().getDeliveryTag(),true);
         }
     }

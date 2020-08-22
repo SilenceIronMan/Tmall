@@ -1,7 +1,7 @@
 package com.ysy.tmall.product.feign;
 
-import com.ysy.tmall.common.to.producttocoupon.SkuReductionTO;
-import com.ysy.tmall.common.to.producttocoupon.SpuBoundsTO;
+import com.ysy.tmall.common.to.SkuReductionTO;
+import com.ysy.tmall.common.to.SpuBoundsTO;
 import com.ysy.tmall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
