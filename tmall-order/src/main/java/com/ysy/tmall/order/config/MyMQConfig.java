@@ -75,7 +75,7 @@ public class MyMQConfig {
      */
     @Bean
     public Binding orderReleaseOtherBinding() {
-        Binding binding = new Binding("order.release.stock.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.release.other.#", null);
+        Binding binding = new Binding("stock.release.stock.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.release.other.#", null);
         return binding;
     }
 

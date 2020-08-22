@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ysy.tmall.common.to.SkuHasStockVo;
+import com.ysy.tmall.common.to.mq.OrderTo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
 import com.ysy.tmall.common.utils.R;
@@ -23,7 +24,9 @@ import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
 import com.ysy.tmall.order.service.OrderItemService;
 import com.ysy.tmall.order.service.OrderService;
 import com.ysy.tmall.order.vo.*;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -258,7 +261,18 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
              但是有可能由于网络等原因导致了库存解锁队列的消息先被获取了
              所以这边有必要 再去提醒一遍 双重保险
             */
-            rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", "");
+
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(orderEntity, orderTo);
+            try {
+                //TODO 保证消息一定会发送出去，，每一个消息都可以做好日志记录，（给数据库保存每一个消息的详细信息）
+                //TODO 定期扫描数据库将失败的消息再发送一遍
+                //发送订单关单消息给mq  库存服务（其他服务）监听消息 执行解锁库存
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderTo);
+            } catch (AmqpException e) {
+                //TODO 将没发送成功的消息进行重试发送
+                e.printStackTrace();
+            }
 
         }
 
