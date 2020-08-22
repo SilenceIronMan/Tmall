@@ -24,9 +24,9 @@ spring:
     template:
       mandatory: true
     #手动确认消息处理
-#    listener:
-#      simple:
-#        acknowledge-mode: manual
+    listener:
+      simple:
+        acknowledge-mode: manual
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
