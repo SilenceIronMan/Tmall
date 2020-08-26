@@ -1,5 +1,6 @@
 package com.ysy.tmall.order;
 
+import com.ysy.tmall.order.config.AlipayTemplate;
 import com.ysy.tmall.order.entity.OrderEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
 import java.util.UUID;
 
 @SpringBootTest
@@ -20,6 +22,9 @@ class TmallOrderApplicationTests {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Resource
+    AlipayTemplate alipayTemplate;
 
     @Test
     void createExchange() {
@@ -58,10 +63,17 @@ class TmallOrderApplicationTests {
     }
 
     @Test
-    @RabbitListener(queues = "springQueue")
+    //@RabbitListener(queues = "springQueue")
     void getMessage(Message message, OrderEntity orderEntity) {
         log.info("===============message" + message + orderEntity);
 
     }
 
+
+
+    @Test
+    void testAliPay() {
+        System.out.println(alipayTemplate.getNotify_url());
+        System.out.println(alipayTemplate.getCharset());
+    }
 }
