@@ -12,6 +12,8 @@ spring:
     name: tmall-member
   thymeleaf:
     cache: false
+  redis:
+    host: 129.211.93.117
   session:
     store-type: redis
 
