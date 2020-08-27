@@ -38,6 +38,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -276,6 +277,32 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         }
 
+    }
+
+    /**
+     * 获取订单信息
+     * @param orderSn
+     * @return
+     */
+    @Override
+    public PayVo getOrderSn(String orderSn) {
+
+        OrderEntity orderEntity = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        PayVo payVo = new PayVo();
+        payVo.setOut_trade_no(orderSn);
+        BigDecimal payAmount = orderEntity.getPayAmount();
+        payAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
+        payVo.setTotal_amount(payAmount.toString());
+
+        List<OrderItemEntity> orderItems = orderItemService
+                .list(new QueryWrapper<OrderItemEntity>().eq("order_sn", orderSn));
+        // 去第一个商品名作为支付宝的订单名字
+        OrderItemEntity orderItemEntity = orderItems.get(0);
+        String skuName = orderItemEntity.getSkuName();
+        payVo.setSubject(skuName);
+
+        payVo.setBody(orderItemEntity.getSkuAttrsVals());
+        return payVo;
     }
 
     /**

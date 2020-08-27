@@ -5,6 +5,7 @@ import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.order.entity.OrderEntity;
 import com.ysy.tmall.order.vo.OrderConfirmVo;
 import com.ysy.tmall.order.vo.OrderSubmitVo;
+import com.ysy.tmall.order.vo.PayVo;
 import com.ysy.tmall.order.vo.SubmitOrderResponseVo;
 
 import java.util.Map;
@@ -28,5 +29,7 @@ public interface OrderService extends IService<OrderEntity> {
     OrderEntity getOrderStatus(String orderSn);
 
     void closeOrder(OrderEntity entity);
+
+    PayVo getOrderSn(String orderSn);
 }
 

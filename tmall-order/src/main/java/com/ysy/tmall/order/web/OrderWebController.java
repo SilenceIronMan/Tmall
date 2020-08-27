@@ -1,17 +1,21 @@
 package com.ysy.tmall.order.web;
 
+import com.alipay.api.AlipayApiException;
+import com.ysy.tmall.order.config.AlipayTemplate;
 import com.ysy.tmall.order.service.OrderService;
 import com.ysy.tmall.order.vo.OrderConfirmVo;
 import com.ysy.tmall.order.vo.OrderSubmitVo;
+import com.ysy.tmall.order.vo.PayVo;
 import com.ysy.tmall.order.vo.SubmitOrderResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -22,8 +26,25 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class OrderWebController {
 
-    @Autowired
-    OrderService orderService;
+    @Resource
+    private OrderService orderService;
+
+    @Resource
+    private AlipayTemplate alipayTemplate;
+
+    @RequestMapping(value = "/payOrder", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String payOrder(@RequestParam("orderSn") String orderSn) throws AlipayApiException {
+
+        PayVo payVo = orderService.getOrderSn(orderSn);
+
+        String pay = alipayTemplate.pay(payVo);
+        System.out.println(pay);
+        // 直接返回支付宝的自动提交表单
+        return pay;
+    }
+
+
 
     /**
      * 跳转 结算页面
