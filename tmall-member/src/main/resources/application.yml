@@ -12,7 +12,8 @@ spring:
     name: tmall-member
   thymeleaf:
     cache: false
-
+  session:
+    store-type: redis
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
