@@ -32,6 +32,13 @@ public class OrderWebController {
     @Resource
     private AlipayTemplate alipayTemplate;
 
+    /**
+     * 1.将支付宝支付页面返回给用户浏览器
+     * 2.支付成功以后, 调到支付成功页面
+     * @param orderSn
+     * @return
+     * @throws AlipayApiException
+     */
     @RequestMapping(value = "/payOrder", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String payOrder(@RequestParam("orderSn") String orderSn) throws AlipayApiException {
