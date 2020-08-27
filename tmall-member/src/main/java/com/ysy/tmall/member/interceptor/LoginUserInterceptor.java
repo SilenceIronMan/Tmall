@@ -3,6 +3,7 @@ package com.ysy.tmall.member.interceptor;
 import com.ysy.tmall.common.constant.AuthServerConstant;
 import com.ysy.tmall.common.vo.MemberResponseVO;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,15 @@ public class LoginUserInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        // member服务 rabbitMQ 调用feign  放行
+        // URL 是带主机地址的 url 是主机地址之后的部分
+        String requestURI = request.getRequestURI();
+        boolean match = new AntPathMatcher().match("/member/**", requestURI);
+        if (match) {
+            return true;
+        }
+
 
         MemberResponseVO attribute = (MemberResponseVO)request.getSession().getAttribute(AuthServerConstant.LOGIN_USER);
         if (Objects.nonNull(attribute)) {
