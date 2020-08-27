@@ -74,3 +74,8 @@ spring:
           uri: lb://tmall-order
           predicates:
             - Host=order.ysymall.com
+
+        - id: tmall_member_route
+          uri: lb://tmall-member
+          predicates:
+            - Host=member.ysymall.com
