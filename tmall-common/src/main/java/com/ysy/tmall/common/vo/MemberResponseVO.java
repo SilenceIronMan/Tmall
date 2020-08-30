@@ -13,13 +13,13 @@ import java.util.Date;
 public class MemberResponseVO {
     private Long id;
     /**
-     * 会员等级id
-     */
-    private Long levelId;
-    /**
      * 用户名
      */
     private String username;
+    /**
+     * 会员等级id
+     */
+    private Long levelId;
     /**
      * 密码
      */

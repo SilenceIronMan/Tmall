@@ -42,6 +42,16 @@ public class OrderController {
 
 
     /**
+     * 查询当前登录用户所有订单
+     */
+    @PostMapping("/listWithItem")
+    public R listWithItem(@RequestBody Map<String, Object> params){
+        PageUtils page = orderService.listWithItem(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
      * 列表
      */
     @RequestMapping("/list")

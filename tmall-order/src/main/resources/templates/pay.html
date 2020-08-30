@@ -100,7 +100,10 @@
             <img src="img\weixin.png" alt="">微信支付
           </li>
 		  <li>
-            <img src="img\zhifubao.png" style="weight:auto;height:30px;" alt="">支付宝
+            <a th:href="'http://order.ysymall.com/payOrder?orderSn='+${submitOrderResp.order.orderSn}">
+              <img src="img/zhifubao.png" style="weight:auto;height:30px;" alt="">
+              支付宝
+            </a>
           </li>
         </ul>
       </div>

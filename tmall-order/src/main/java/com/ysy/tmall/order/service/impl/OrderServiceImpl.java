@@ -4,6 +4,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ysy.tmall.common.to.SkuHasStockVo;
 import com.ysy.tmall.common.to.mq.OrderTo;
@@ -302,6 +303,35 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         payVo.setBody(orderItemEntity.getSkuAttrsVals());
         return payVo;
+    }
+
+    /**
+     * 查询当前登录用户所有订单
+     * @param params
+     * @return
+     */
+    @Override
+    public PageUtils listWithItem(Map<String, Object> params) {
+        MemberResponseVO memberResponseVO = LoginUserInterceptor.loginUser.get();
+        Long memberId = memberResponseVO.getId();
+        IPage<OrderEntity> page = this.page(new Query<OrderEntity>().getPage(params),
+                new QueryWrapper<OrderEntity>().eq("member_id", memberId).orderByDesc("id"));
+
+        List<OrderEntityVO> orderEntityVOS = page.getRecords().stream().map(o -> {
+            OrderEntityVO orderEntityVO = new OrderEntityVO();
+            BeanUtils.copyProperties(o, orderEntityVO);
+
+            List<OrderItemEntity> orderItemEntities = orderItemService.list(new QueryWrapper<OrderItemEntity>()
+                    .eq("order_sn", orderEntityVO.getOrderSn()));
+
+            orderEntityVO.setItemEntities(orderItemEntities);
+            return orderEntityVO;
+        }).collect(Collectors.toList());
+
+        PageUtils pageUtils = new PageUtils(page);
+        pageUtils.setList(orderEntityVOS);
+
+        return pageUtils;
     }
 
     /**
