@@ -25,7 +25,9 @@ public class LoginUserInterceptor implements HandlerInterceptor {
         // URL 是带主机地址的 url 是主机地址之后的部分
         String requestURI = request.getRequestURI();
         boolean match = new AntPathMatcher().match("/order/order/status/**", requestURI);
-        if (match) {
+        // 支付宝通知 放行
+        boolean match1 = new AntPathMatcher().match("/payed/notify", requestURI);
+        if (match || match1) {
             return true;
         }
 

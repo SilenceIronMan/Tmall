@@ -38,6 +38,9 @@ public class AlipayTemplate {
     // 支付宝网关； https://openapi.alipaydev.com/gateway.do
     private  String gatewayUrl = "https://openapi.alipaydev.com/gateway.do";
 
+    //订单支付超时之间
+    private String timeout="30m";
+
     public  String pay(PayVo vo) throws AlipayApiException {
 
         //AlipayClient alipayClient = new DefaultAlipayClient(AlipayTemplate.gatewayUrl, AlipayTemplate.app_id, AlipayTemplate.merchant_private_key, "json", AlipayTemplate.charset, AlipayTemplate.alipay_public_key, AlipayTemplate.sign_type);
@@ -64,6 +67,7 @@ public class AlipayTemplate {
                 + "\"total_amount\":\""+ total_amount +"\","
                 + "\"subject\":\""+ subject +"\","
                 + "\"body\":\""+ body +"\","
+                + "\"timeout_express\":\""+timeout+"\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
 
         String result = alipayClient.pageExecute(alipayRequest).getBody();
