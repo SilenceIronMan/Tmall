@@ -1,15 +1,12 @@
 package com.ysy.tmall.coupon.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ysy.tmall.coupon.entity.SeckillSessionEntity;
 import com.ysy.tmall.coupon.service.SeckillSessionService;
@@ -30,6 +27,20 @@ import com.ysy.tmall.common.utils.R;
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;
+
+
+    /**
+     * 列表
+     */
+    @GetMapping("/latest3DaysSession")
+    public R getLatest3DaysSession(){
+
+        List<SeckillSessionEntity> sessions = seckillSessionService.getLatest3DaysSession();
+
+        return R.ok().setData(sessions);
+    }
+
+
 
     /**
      * 列表
