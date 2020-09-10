@@ -9,18 +9,22 @@ import com.ysy.tmall.seckill.service.SeckillService;
 import com.ysy.tmall.seckill.to.SeckillSkuRedisTo;
 import com.ysy.tmall.seckill.vo.SeckillSessionsWithSkus;
 import com.ysy.tmall.seckill.vo.SkuInfoVo;
+import org.apache.commons.lang.StringUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.UUID;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +71,73 @@ public class SeckillServiceImpl implements SeckillService {
 
 
 
+    }
+
+    @Override
+    public List<SeckillSkuRedisTo> getCurrentSeckillSkus() {
+        long nowTime = new Date().getTime();
+        Set<String> keys = redisTemplate.keys(SESSIONS_CACHE_PREFIX + "*");
+        for (String key : keys) {
+            String[] split = key.replace(SESSIONS_CACHE_PREFIX, StringUtils.EMPTY).split("_");
+            long startTime = Long.parseLong(split[0]);
+            long endTime = Long.parseLong(split[1]);
+
+            if (nowTime >= startTime && nowTime <= endTime) {
+                List<String> sessionSkuList = redisTemplate.opsForList().range(key, -100, 100);
+
+                BoundHashOperations<String, String, String> operations = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
+
+                List<String> list = operations.multiGet(sessionSkuList);
+
+                if (Objects.nonNull(list)) {
+                    List<SeckillSkuRedisTo> collect = list.stream().map(x -> {
+                        SeckillSkuRedisTo seckillSkuRedisTo = JSON.parseObject(x, SeckillSkuRedisTo.class);
+                        return seckillSkuRedisTo;
+
+                    }).collect(Collectors.toList());
+                    return collect;
+                }
+
+                // 匹配上就跳出(时间段不交叉)
+                break;
+            }
+
+        }
+        return null;
+    }
+
+    @Override
+    public SeckillSkuRedisTo getSkuSeckillInfo(Long skuId) {
+
+        // 1. 找到所有参与秒杀的key
+
+        BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
+        Set<String> keys = ops.keys();
+
+        if (keys != null && keys.size() > 0) {
+            String regex = "//d_" + skuId;
+            Pattern compile = Pattern.compile(regex);
+            for (String key : keys) {
+                Matcher matcher = compile.matcher(key);
+                boolean matches = matcher.matches();
+                if (matches) {
+                    String redisToStr = ops.get(key);
+                    SeckillSkuRedisTo seckillSkuRedisTo = JSON.parseObject(redisToStr, SeckillSkuRedisTo.class);
+                    long nowTime = new Date().getTime();
+                    long startTime = seckillSkuRedisTo.getStartTime();
+                    long endTime = seckillSkuRedisTo.getEndTime();
+                    if (nowTime >= startTime && nowTime <= endTime) {
+
+                    } else {
+                        seckillSkuRedisTo.setRandomCode(null);
+                    }
+                    return seckillSkuRedisTo;
+                }
+
+
+            }
+        }
+        return null;
     }
 
     /**

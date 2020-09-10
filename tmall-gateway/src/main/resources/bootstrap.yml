@@ -86,3 +86,8 @@ spring:
           uri: lb://tmall-member
           predicates:
             - Host=member.ysymall.com
+
+        - id: tmall_seckill_route
+          uri: lb://tmall-seckill
+          predicates:
+            - Host=seckill.ysymall.com

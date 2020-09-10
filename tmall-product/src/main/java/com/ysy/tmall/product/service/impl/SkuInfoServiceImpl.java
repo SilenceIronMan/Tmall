@@ -144,6 +144,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             skuItemVo.setGroupAttrs(groupAttrs);
         }, executor);
 
+        // 判断该商品是否参与秒杀服务
+
 
         //等待所有任务都完成
         CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture).get();
