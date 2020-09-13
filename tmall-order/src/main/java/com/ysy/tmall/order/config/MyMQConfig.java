@@ -79,4 +79,26 @@ public class MyMQConfig {
         return binding;
     }
 
+
+    /**
+     * 削峰队列Binding
+     * @return
+     */
+    @Bean
+    public Binding orderSeckillOrderBinding() {
+        Binding binding = new Binding("order.seckill.order.queue", Binding.DestinationType.QUEUE, "order-event-exchange", "order.seckill.order", null);
+        return binding;
+    }
+
+
+    /**
+     * 削峰队列
+     * @return
+     */
+    @Bean
+    public Queue orderSeckillOrderQueue(){
+        Queue queue = new Queue("order.seckill.order.queue", true, false, false);
+        return queue;
+    }
+
 }

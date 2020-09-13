@@ -3,6 +3,7 @@ package com.ysy.tmall.seckill.controller;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.seckill.service.SeckillService;
 import com.ysy.tmall.seckill.to.SeckillSkuRedisTo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ public class SeckillController {
 
     @Resource
     private SeckillService seckillService;
+
 
     /**
      * 返回当前时间可以参与秒杀的商品
@@ -49,7 +51,9 @@ public class SeckillController {
     public R secKill(@RequestParam("killId") String killId,
                      @RequestParam("key") String key,
                      @RequestParam("num") Integer num) {
-        //SeckillSkuRedisTo to = seckillService.getSkuSeckillInfo(skuId);
-        return null;
+        // 1.登陆拦截 拦截器 判断了
+        String orderSn = seckillService.kill(killId, key, num);
+        return R.ok().setData(orderSn);
     }
+
 }

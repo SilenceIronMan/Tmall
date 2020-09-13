@@ -7,6 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
+// @EnableRabbit 只发消息可以不加 收消息一定要加
 @EnableRedisHttpSession
 @EnableFeignClients
 @EnableDiscoveryClient
