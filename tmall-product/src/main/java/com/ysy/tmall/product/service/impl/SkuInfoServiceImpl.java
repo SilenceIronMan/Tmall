@@ -1,16 +1,20 @@
 package com.ysy.tmall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.common.utils.Query;
+import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.product.dao.SkuInfoDao;
 import com.ysy.tmall.product.entity.SkuImagesEntity;
 import com.ysy.tmall.product.entity.SkuInfoEntity;
 import com.ysy.tmall.product.entity.SpuInfoDescEntity;
 import com.ysy.tmall.product.entity.SpuInfoEntity;
+import com.ysy.tmall.product.feign.SeckillFeignService;
 import com.ysy.tmall.product.service.*;
+import com.ysy.tmall.product.vo.web.SeckillInfoVo;
 import com.ysy.tmall.product.vo.web.SkuItemSaleAttrVo;
 import com.ysy.tmall.product.vo.web.SkuItemVo;
 import com.ysy.tmall.product.vo.web.SpuItemAttrGroupVo;
@@ -46,6 +50,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Resource
     private ThreadPoolExecutor executor;
+
+    @Resource
+    private SeckillFeignService seckillFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -146,9 +153,19 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
         // 判断该商品是否参与秒杀服务
 
+        CompletableFuture<Void> seckillInfoFuture = CompletableFuture.runAsync(() -> {
+            R skuSeckillInfo = seckillFeignService.getSkuSeckillInfo(skuId);
+            if (skuSeckillInfo.getCode() == 0) {
+
+                SeckillInfoVo seckillInfoData = skuSeckillInfo.getData(new TypeReference<SeckillInfoVo>() {
+                });
+                skuItemVo.setSeckillInfoVo(seckillInfoData);
+
+            }
+        }, executor);
 
         //等待所有任务都完成
-        CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture).get();
+        CompletableFuture.allOf(saleAttrFuture, descFuture, baseAttrFuture, imageFuture, seckillInfoFuture).get();
 
 
         return skuItemVo;

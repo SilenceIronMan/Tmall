@@ -10,18 +10,15 @@ import com.ysy.tmall.seckill.to.SeckillSkuRedisTo;
 import com.ysy.tmall.seckill.vo.SeckillSessionsWithSkus;
 import com.ysy.tmall.seckill.vo.SkuInfoVo;
 import org.apache.commons.lang.StringUtils;
-import org.redisson.Redisson;
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.text.DateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,7 +112,7 @@ public class SeckillServiceImpl implements SeckillService {
         Set<String> keys = ops.keys();
 
         if (keys != null && keys.size() > 0) {
-            String regex = "//d_" + skuId;
+            String regex = "\\d_" + skuId;
             Pattern compile = Pattern.compile(regex);
             for (String key : keys) {
                 Matcher matcher = compile.matcher(key);
