@@ -1,6 +1,6 @@
 package com.ysy.tmall.search.vo;
 
-import com.ysy.tmall.common.to.producttocoupon.to.SkuEsModel;
+import com.ysy.tmall.common.to.to.SkuEsModel;
 import lombok.Data;
 
 import java.util.List;

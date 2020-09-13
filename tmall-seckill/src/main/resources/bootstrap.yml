@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tmall-seckill
+  cloud:
+    nacos:
+      config:
+        server-addr: 129.211.93.117
+        namespace: a4b86081-144b-47dc-9305-142628d0ca30

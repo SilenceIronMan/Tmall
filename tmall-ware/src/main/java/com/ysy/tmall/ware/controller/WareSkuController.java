@@ -1,20 +1,21 @@
 package com.ysy.tmall.ware.controller;
 
+import com.ysy.tmall.common.exception.BizCodeEnum;
+import com.ysy.tmall.common.exception.NoStockException;
+import com.ysy.tmall.common.to.SkuHasStockVo;
+import com.ysy.tmall.common.utils.PageUtils;
+import com.ysy.tmall.common.utils.R;
+import com.ysy.tmall.ware.entity.WareSkuEntity;
+import com.ysy.tmall.ware.service.WareSkuService;
+import com.ysy.tmall.ware.vo.WareSkuLockVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 //import org.apache.shiro.authz.annotation.RequiresPermissions;
-import com.ysy.tmall.common.to.producttocoupon.SkuHasStockVo;
-import com.ysy.tmall.ware.vo.LockStockResult;
-import com.ysy.tmall.ware.vo.WareSkuLockVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.ysy.tmall.ware.entity.WareSkuEntity;
-import com.ysy.tmall.ware.service.WareSkuService;
-import com.ysy.tmall.common.utils.PageUtils;
-import com.ysy.tmall.common.utils.R;
 
 
 
@@ -34,10 +35,13 @@ public class WareSkuController {
 
 
     @PostMapping("/lock/order")
-    public R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo){
-        List<LockStockResult> results = wareSkuService.orderLockStock(wareSkuLockVo);
-
-        return R.ok().setData(results);
+    public R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo) {
+        try {
+            wareSkuService.orderLockStock(wareSkuLockVo);
+            return R.ok();
+        } catch (NoStockException e) {
+            return R.error(BizCodeEnum.NO_STOCK_EXCEPTION.getCode(), BizCodeEnum.NO_STOCK_EXCEPTION.getMessage());
+        }
     }
 
     @PostMapping("/hasstock")

@@ -1,11 +1,10 @@
 package com.ysy.tmall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ysy.tmall.common.to.mq.SeckillOrderTo;
 import com.ysy.tmall.common.utils.PageUtils;
 import com.ysy.tmall.order.entity.OrderEntity;
-import com.ysy.tmall.order.vo.OrderConfirmVo;
-import com.ysy.tmall.order.vo.OrderSubmitVo;
-import com.ysy.tmall.order.vo.SubmitOrderResponseVo;
+import com.ysy.tmall.order.vo.*;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -24,5 +23,17 @@ public interface OrderService extends IService<OrderEntity> {
     OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException;
 
     SubmitOrderResponseVo submitOrder(OrderSubmitVo vo);
+
+    OrderEntity getOrderStatus(String orderSn);
+
+    void closeOrder(OrderEntity entity);
+
+    PayVo getOrderSn(String orderSn);
+
+    PageUtils listWithItem(Map<String, Object> params);
+
+    String handlePayResult(PayAsyncVo vo);
+
+    void createSeckillOrder(SeckillOrderTo entity);
 }
 

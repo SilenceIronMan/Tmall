@@ -1,6 +1,11 @@
 package com.ysy.tmall.order;
 
+import com.ysy.tmall.common.utils.PageUtils;
+import com.ysy.tmall.common.vo.MemberResponseVO;
+import com.ysy.tmall.order.config.AlipayTemplate;
 import com.ysy.tmall.order.entity.OrderEntity;
+import com.ysy.tmall.order.interceptor.LoginUserInterceptor;
+import com.ysy.tmall.order.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
@@ -9,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.UUID;
 
 @SpringBootTest
@@ -20,6 +27,12 @@ class TmallOrderApplicationTests {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Resource
+    AlipayTemplate alipayTemplate;
+
+    @Resource
+    private OrderService orderService;
 
     @Test
     void createExchange() {
@@ -58,10 +71,32 @@ class TmallOrderApplicationTests {
     }
 
     @Test
-    @RabbitListener(queues = "springQueue")
+    //@RabbitListener(queues = "springQueue")
     void getMessage(Message message, OrderEntity orderEntity) {
         log.info("===============message" + message + orderEntity);
 
     }
 
+
+
+    @Test
+    void testAliPay() {
+        System.out.println(alipayTemplate.getNotify_url());
+        System.out.println(alipayTemplate.getCharset());
+    }
+
+
+
+    @Test
+    void testOrderItems() {
+        MemberResponseVO memberResponseVO = new MemberResponseVO();
+        memberResponseVO.setId(1L);
+        LoginUserInterceptor.loginUser.set(memberResponseVO);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("page", "9");
+        map.put("limit", "1");
+        PageUtils pageUtils = orderService.listWithItem(map);
+        System.out.println(pageUtils);
+    }
 }

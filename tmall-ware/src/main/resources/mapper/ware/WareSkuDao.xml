@@ -12,6 +12,28 @@
                     <result property="skuName" column="sku_name"/>
                     <result property="stockLocked" column="stock_locked"/>
     </resultMap>
+    <update id="lockSkuStock">
+        UPDATE wms_ware_sku
+        SET stock_locked = stock_locked + #{num}
+        WHERE
+            ware_id = #{wareId}
+            AND
+            sku_id = #{skuId}
+            AND
+            stock - stock_locked >= #{num}
+
+    </update>
+
+    <update id="unLockStock">
+        UPDATE wms_ware_sku
+        SET stock_locked = stock_locked - #{num}
+        WHERE
+            ware_id = #{wareId}
+            AND
+            sku_id = #{skuId}
+
+    </update>
+
     <select id="getSkuStock" resultType="java.lang.Long">
         SELECT
         IFNULL(
@@ -22,6 +44,17 @@
             wms_ware_sku
         WHERE
             sku_id = #{skuId}
+    </select>
+
+    <select id="listWareIdHasSkuStock" resultType="java.lang.Long">
+        SELECT
+            ware_id
+        FROM
+            wms_ware_sku
+        WHERE
+            sku_id = #{skuId}
+        AND stock - stock_locked > 0
+
     </select>
 
 

@@ -162,71 +162,126 @@
 						</div>
 						<div class="box-yuyue">
 							<div class="yuyue-one">
-								 热卖促销中
+								<img src="img/7270ffc3baecdd448958f9f5e69cf60f.png" alt=""/> 预约抢购
 							</div>
 							<div class="yuyue-two">
 								<ul>
 									<li>
-
+										<img src="img/f64963b63d6e5849977ddd6afddc1db5.png"/>
+										<span>190103</span> 人预约
 									</li>
 									<li>
+										<img src="img/36860afb69afa241beeb33ae86678093.png"/> 预约剩余
+										<span id="timer">
 
+									</span>
 									</li>
 								</ul>
 							</div>
 						</div>
 						<div class="box-summary clear">
 							<ul>
-								<li>惊喜价</li>
+								<li>京东价</li>
 								<li>
 									<span>￥</span>
 									<span th:text="${#numbers.formatDecimal(item.info.price,3,2)}">4499.00</span>
 								</li>
-								<li>
+								<li style="color: red" th:if="${item.seckillInfoVo!=null}">
+                            <span th:if="${#dates.createNow().getTime()<item.seckillInfoVo.startTime}">
+                                商品将会在[[${#dates.format(new java.util.Date(item.seckillInfoVo.startTime),"yyyy-MM-dd HH:mm:ss")}]]进行秒杀
+                            </span>
+
+									<span th:if="${#dates.createNow().getTime()>=item.seckillInfoVo.startTime && #dates.createNow().getTime()<=item.seckillInfoVo.endTime}">
+                               秒杀价：[[${#numbers.formatDecimal(item.seckillInfoVo.seckillPrice,1,2)}]]
+                            </span>
 
 								</li>
-								<li>
-									<a href="">
-
+								<li >
+									<a href="/static/item/">
+										预约说明
 									</a>
 								</li>
 							</ul>
 						</div>
 						<div class="box-wrap clear">
-
+							<div class="box-wrap-one clear">
+								<ul>
+									<li>增值业务</li>
+									<li><img src="/img/90a6fa41d0d46b4fb0ff6907ca17c478.png"/></li>
+									<li><img src="/img/2e19336b961586468ef36dc9f7199d4f.png"/></li>
+									<li><img src="/img/1f80c3d6fabfd3418e54b005312c00b5.png"/></li>
+								</ul>
+							</div>
 						</div>
 
 						<div class="box-stock">
 							<ul class="box-ul">
-								<li>库存:</li>
+								<li>配送至</li>
 								<li class="box-stock-li">
 									<div class="box-stock-one">
+										北京朝阳区管庄
+										<img src="img/4a79b87a68623d4e8a73aff3e25fa99b.png" alt="" class="img"/>
 									</div>
+									<div class="box-stock-two">
+										<dl>
+											<dt>
+												<a>选择新地址</a>
+												<img src="img/4a79b87a68623d4e8a73aff3e25fa99b.png" alt=""
+													 class="box-stock-two-img"/>
+											</dt>
+											<dd>
+												<div class="box-stock-dd">
+													<div class="box-stock-top">
+														<div class="box-stock-div">北京</div>
+														<div class="box-stock-div">朝阳区</div>
+														<div class="box-stock-div">管庄</div>
+													</div>
+													<div class="box-stock-fot">
+														<div class="box-stock-con" style="display: block;">
+															<ul>
+																<li>北京</li>
+																<li>上海</li>
+																<li>天津</li>
+																<li>重庆</li>
+															</ul>
+														</div>
+														<div class="box-stock-con">
+															<ul>
+																<li>朝阳区</li>
+																<li>海淀区</li>
+																<li>东城区</li>
+																<li>西城区</li>
+															</ul>
+														</div>
+														<div class="box-stock-con">
+															<ul>
+																<li>4环到5环之内</li>
+																<li>管庄</li>
+																<li>北苑</li>
+															</ul>
+														</div>
 
+													</div>
+												</div>
+											</dd>
+										</dl>
+
+									</div>
 
 								</li>
 								<li>
-									<span th:text="${item.hasStock?'有货':'无货'}">无货， 此商品暂时售完</span>
+									<span th:text="${item.hasStock?'有货':'无货'}">无货</span>， 此商品暂时售完
 								</li>
-
 							</ul>
 						</div>
-						 <div class="box-stock">
+						<div class="box-supply">
 							<ul class="box-ul">
-								<li>重  量:</li>
-								<li class="box-stock-li">
-									<div class="box-stock-one">
-									</div>
-
-
-								</li>
+								<li></li>
 								<li>
-									  10 kg
+									由<span>京东</span> 发货，并提供售后服务
 								</li>
-
 							</ul>
 						</div>
-
 						<div class="box-attr-3">
 						<br/>
 							<div class="box-attr-2 clear"   th:each="attr:${item.saleAttr}">
@@ -290,9 +345,15 @@
 									</div>
 								</form>
 							</div>
-							<div id="cartBtn"  style="cursor:pointer;"  canClick="1" th:attr="skuId=${item.info.skuId}" onclick="addToCart(this)" class="box-btns-two">
-								<a href="#">
-								加入购物车
+						<div class="box-btns-two" th:if="${item.seckillInfoVo!=null &&(#dates.createNow().getTime()>=item.seckillInfoVo.startTime && #dates.createNow().getTime()<=item.seckillInfoVo.endTime)}">
+							<!--skuId,秒杀场次id,令牌-->
+							<a href="" id="secKillA" th:attr="skuId=${item.info.skuId},seckill_session_id=${item.seckillInfoVo.promotionSessionId},code=${item.seckillInfoVo.randomCode}" >
+								立即抢购
+							</a>
+						</div>
+							<div class="box-btns-two" th:if="${item.seckillInfoVo==null||(#dates.createNow().getTime()<item.seckillInfoVo.startTime || #dates.createNow().getTime()>item.seckillInfoVo.endTime)}">
+								<a href="" id="addToCartA" th:attr="skuId=${item.info.skuId}">
+									加入购物车
 								</a>
 							</div>
 						</div>
@@ -588,12 +649,25 @@
 		})
 
 
-		function addToCart(obj) {
+		$("#addToCartA").click(function () {
 			var num = $("#numInput").val();
-			var skuId = $(obj).attr("skuId");
+			var skuId = $(this).attr("skuId");
 
 			location.href = "http://cart.ysymall.com/addToCart?skuId="+skuId+"&num=" + num;
-		}
+		});
+
+		$("#secKillA").click(function () {
+			var isLogin=[[${session.loginUser!=null}]];
+			if(isLogin){
+				var killId= $(this).attr("seckill_session_id")+"_"+$(this).attr("skuId");
+				var key=$(this).attr("code");
+				var num=$("#numInput").val();
+				location.href="http://seckill.ysymall.com/kill?killId="+killId+"&key="+key+"&num="+num;
+			}else {
+				alert("请先登录");
+			}
+			return false;
+		})
 
 	</script>
 

@@ -1,11 +1,10 @@
 package com.ysy.tmall.search.controller;
 
 import com.ysy.tmall.common.exception.BizCodeEnum;
-import com.ysy.tmall.common.to.producttocoupon.to.SkuEsModel;
+import com.ysy.tmall.common.to.to.SkuEsModel;
 import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.search.service.ProductSaveService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
