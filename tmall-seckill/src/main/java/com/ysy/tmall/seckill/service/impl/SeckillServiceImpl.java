@@ -146,7 +146,7 @@ public class SeckillServiceImpl implements SeckillService {
             long startTime = session.getStartTime().getTime();
             long endTime = session.getEndTime().getTime();
             String key = startTime + "_" +endTime;
-            Boolean aBoolean = redisTemplate.hasKey(key);
+            Boolean aBoolean = redisTemplate.hasKey(SESSIONS_CACHE_PREFIX + key);
 
             if (!aBoolean) {
                 List<String> skuIds = session.getRelationSkus().stream()
