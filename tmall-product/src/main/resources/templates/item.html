@@ -345,9 +345,15 @@
 									</div>
 								</form>
 							</div>
-							<div id="cartBtn"  style="cursor:pointer;"  canClick="1" th:attr="skuId=${item.info.skuId}" onclick="addToCart(this)" class="box-btns-two">
-								<a href="#">
-								加入购物车
+						<div class="box-btns-two" th:if="${item.seckillInfoVo!=null &&(#dates.createNow().getTime()>=item.seckillInfoVo.startTime && #dates.createNow().getTime()<=item.seckillInfoVo.endTime)}">
+							<!--skuId,秒杀场次id,令牌-->
+							<a href="" id="secKillA" th:attr="skuId=${item.info.skuId},seckill_session_id=${item.seckillInfoVo.promotionSessionId},code=${item.seckillInfoVo.randomCode}" >
+								立即抢购
+							</a>
+						</div>
+							<div class="box-btns-two" th:if="${item.seckillInfoVo==null||(#dates.createNow().getTime()<item.seckillInfoVo.startTime || #dates.createNow().getTime()>item.seckillInfoVo.endTime)}">
+								<a href="" id="addToCartA" th:attr="skuId=${item.info.skuId}">
+									加入购物车
 								</a>
 							</div>
 						</div>
@@ -643,12 +649,25 @@
 		})
 
 
-		function addToCart(obj) {
+		$("#addToCartA").click(function () {
 			var num = $("#numInput").val();
-			var skuId = $(obj).attr("skuId");
+			var skuId = $(this).attr("skuId");
 
 			location.href = "http://cart.ysymall.com/addToCart?skuId="+skuId+"&num=" + num;
-		}
+		});
+
+		$("#secKillA").click(function () {
+			var isLogin=[[${session.loginUser!=null}]];
+			if(isLogin){
+				var killId= $(this).attr("seckill_session_id")+"_"+$(this).attr("skuId");
+				var key=$(this).attr("code");
+				var num=$("#numInput").val();
+				location.href="http://seckill.ysymall.com/kill?killId="+killId+"&key="+key+"&num="+num;
+			}else {
+				alert("请先登录");
+			}
+			return false;
+		})
 
 	</script>
 

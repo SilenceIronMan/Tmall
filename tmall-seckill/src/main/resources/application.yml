@@ -7,6 +7,9 @@ spring:
     name: tmall-seckill
   redis:
     host: 129.211.93.117
+  session:
+    store-type: redis
+
 
 server:
   port: 8046

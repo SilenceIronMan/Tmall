@@ -24,7 +24,10 @@
             <artifactId>hutool-all</artifactId>
             <version>5.4.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
         <!-- redis 緩存       -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
