@@ -24,6 +24,8 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual
+  thymeleaf:
+    cache: false
 
 server:
   port: 8046

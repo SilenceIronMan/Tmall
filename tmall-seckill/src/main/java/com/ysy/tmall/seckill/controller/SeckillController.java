@@ -4,10 +4,9 @@ import com.ysy.tmall.common.utils.R;
 import com.ysy.tmall.seckill.service.SeckillService;
 import com.ysy.tmall.seckill.to.SeckillSkuRedisTo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @anthor silenceYin
  * @date 2020/9/11 - 0:29
  */
-@RestController
+@Controller
 public class SeckillController {
 
     @Resource
@@ -27,6 +26,7 @@ public class SeckillController {
      * 返回当前时间可以参与秒杀的商品
      * @return
      */
+    @ResponseBody
     @GetMapping("/currentSeckillSkus")
     public R getCurrentSeckillSkus() {
         List<SeckillSkuRedisTo> vos =  seckillService.getCurrentSeckillSkus();
@@ -37,6 +37,7 @@ public class SeckillController {
      * 获取当前时间秒杀商品信息
      * @return
      */
+    @ResponseBody
     @GetMapping("/sku/seckill/{skuId}")
     public R getSkuSeckillInfo(@PathVariable("skuId")Long skuId) {
         SeckillSkuRedisTo to = seckillService.getSkuSeckillInfo(skuId);
@@ -48,12 +49,15 @@ public class SeckillController {
      * @return
      */
     @GetMapping("/kill")
-    public R secKill(@RequestParam("killId") String killId,
+    public String secKill(@RequestParam("killId") String killId,
                      @RequestParam("key") String key,
-                     @RequestParam("num") Integer num) {
+                     @RequestParam("num") Integer num,
+                     Model model) {
         // 1.登陆拦截 拦截器 判断了
         String orderSn = seckillService.kill(killId, key, num);
-        return R.ok().setData(orderSn);
+        model.addAttribute("orderSn", orderSn);
+
+        return "success";
     }
 
 }
