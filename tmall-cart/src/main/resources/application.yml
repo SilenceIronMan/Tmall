@@ -3,6 +3,10 @@ spring:
     nacos:
       discovery:
         server-addr: 129.211.93.117
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
   redis:
     host: 129.211.93.117 # 如果是 线上 购物车redis 和 缓存redis 不共用  目前 测试共用
   session:

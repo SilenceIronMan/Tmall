@@ -3,6 +3,10 @@ spring:
     nacos:
       discovery:
         server-addr: 129.211.93.117
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
   application:
     name: tmall-seckill
   redis:
@@ -24,6 +28,7 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual
+
   thymeleaf:
     cache: false
 
