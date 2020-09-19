@@ -15,11 +15,22 @@ spring:
     host: 129.211.93.117
   session:
     store-type: redis
+  zipkin:
+    base-url: http://120.79.158.181:9411/
+
+    discovery-client-enabled: false
+    sender:
+      type: web
+
+  sleuth:
+    sampler:
+      probability: 1
 
 server:
   port: 8011
 logging:
   level:
     com.ysy.tmall: debug
-
+    org.springframework.cloud.openfeign: debug
+    org.springframework.cloud.sleuth: debug
 

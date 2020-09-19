@@ -27,6 +27,17 @@ spring:
     listener:
       simple:
         acknowledge-mode: manual
+  zipkin:
+    base-url: http://120.79.158.181:9411/
+
+    discovery-client-enabled: false
+    sender:
+      type: web
+
+  sleuth:
+    sampler:
+      probability: 1
+
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -42,5 +53,7 @@ server:
 logging:
   level:
     com.ysy.tmall: debug
+    org.springframework.cloud.openfeign: debug
+    org.springframework.cloud.sleuth: debug
 
 

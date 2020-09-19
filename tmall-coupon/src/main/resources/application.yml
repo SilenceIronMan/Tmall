@@ -14,6 +14,17 @@ spring:
         port: 8719
   application:
     name: tmall-coupon
+  zipkin:
+    base-url: http://120.79.158.181:9411/
+
+    discovery-client-enabled: false
+    sender:
+      type: web
+
+  sleuth:
+    sampler:
+      probability: 1
+
 
 person:
   name: tk
@@ -33,5 +44,6 @@ server:
 logging:
   level:
     com.ysy.tmall: debug
-
+    org.springframework.cloud.openfeign: debug
+    org.springframework.cloud.sleuth: debug
 
