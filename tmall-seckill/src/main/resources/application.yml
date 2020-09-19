@@ -42,6 +42,9 @@ spring:
     sampler:
       probability: 1
 
+#   不加会产生死锁
+    redis:
+      enabled: false
 
 server:
   port: 8046
